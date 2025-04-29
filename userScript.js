@@ -9,6 +9,7 @@
 // @downloadURL  https://raw.githubusercontent.com/osmaav/extention-for-lt/master/userScript.js
 // @supportURL   https://raw.githubusercontent.com/osmaav/extention-for-lt/issues
 // @match        https://www.leadertask.ru/web/*
+// @require      https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js
 // @grant        none
 // @run-at       document-idle
 
@@ -16,12 +17,12 @@
 ( async() => {
   'use strict';
   //console.warn('UserScript: Скрипт запущен');
-  try {
-    const { XLSX } = await import('https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js');
-  } catch (error) {
-    console.warn('UserScript: ошибка загрузки модуля XLSX', error);
-    return;
-  }
+  // try {
+  //   const { XLSX } = await import('https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js');
+  // } catch (error) {
+  //   console.warn('UserScript: ошибка загрузки модуля XLSX', error);
+  //   return;
+  // }
 
   let btnExpListToXlsx = document.createElement('button');
   btnExpListToXlsx.classList.add('dark:bg-[#404040]',
