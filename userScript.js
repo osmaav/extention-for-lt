@@ -4,6 +4,10 @@
 // @version      v3.4.4
 // @description  Выгружаю Чек-лист в файл xlsx
 // @author       @osmaav
+// @homepageURL  https://github.com/osmaav/extention-for-lt
+// @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/master/userScript.js
+// @downloadURL  https://raw.githubusercontent.com/osmaav/extention-for-lt/master/userScript.js
+// @supportURL   https://raw.githubusercontent.com/osmaav/extention-for-lt/issues
 // @match        https://www.leadertask.ru/web/*
 // @grant        none
 // @run-at       document-idle
