@@ -9,7 +9,7 @@
 // @downloadURL  https://raw.githubusercontent.com/osmaav/extention-for-lt/master/userScript.js
 // @supportURL   https://raw.githubusercontent.com/osmaav/extention-for-lt/issues
 // @match        https://www.leadertask.ru/web/*
-// @require      https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js
+// @require      https://app.unpkg.com/xlsx@0.18.5/files/xlsx.mjs
 // @grant        none
 // @run-at       document-idle
 
