@@ -2,36 +2,35 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>PayloadContent</key>
-	<array>
-		<dict>
-			<key>DNSSettings</key>
-			<dict>
-				<key>DNSProtocol</key>
-				<string>HTTPS</string>
-				<key>ServerURL</key>
-				<string>https://doh.opendns.com/dns-query</string>
-			</dict>
-			<key>PayloadDescription</key>
-			<string>Configures device to use OpenDNS Encrypted DNS over HTTPS</string>
-			<key>PayloadDisplayName</key>
-			<string>OpenDNS DNS over HTTPS Standard</string>
-			<key>PayloadIdentifier</key>
-			<string>com.apple.dnsSettings.managed.684b6631-98ef-4534-ab68-baa22a4a3b81</string>
-			<key>PayloadType</key>
-			<string>com.apple.dnsSettings.managed</string>
-			<key>PayloadUUID</key>
-			<string>0fedcb81-3c3d-4604-b90e-12ee51bdaee1</string>
-			<key>PayloadVersion</key>
-			<integer>1</integer>
-			<key>ProhibitDisablement</key>
-			<false/>
-		</dict>
-	</array>
-	<key>PayloadDescription</key>
-	<string>Adds the OpenDNS DNS to Big Sur and iOS 14 based systems</string>
-	<key>PayloadDisplayName</key>
-	<string>OpenDNS Encrypted DNS</string>
+<key>PayloadContent</key>
+    <dict>
+        <key>NetworkConfiguration</key>
+        <dict>
+            <key>Network</key>
+            <dict>
+                <key>HTTPProxy</key>
+                <dict>
+                    <key>HTTPEnable</key>
+                    <true/>
+                    <key>HTTPSEnable</key>
+                    <true/>
+                    <key>HTTPProxy</key>
+                    <string>146.59.202.70</string>
+                    <key>HTTPPort</key>
+                    <integer>8081</integer>
+                    <key>HTTPAuthentication</key>
+                    <dict>
+                        <key>AuthType</key>
+                        <string>MSCHAPv2</string>
+                    </dict>
+                </dict>
+            </dict>
+        </dict>
+    </dict>
+    <key>PayloadDescription</key>
+    <string>Прокси-сервер для доступа к youtube.com</string>
+    <key>PayloadDisplayName</key>
+    <string>Прокси-сервер</string>
 	<key>PayloadIdentifier</key>
 	<string>com.paulmillr.apple-dns</string>
 	<key>PayloadRemovalDisallowed</key>
