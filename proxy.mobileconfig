@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
@@ -31,7 +30,7 @@
             <key>PayloadDescription</key>
             <string>Прокси-сервер для доступа к youtube.com</string>
             <key>PayloadDisplayName</key>
-            <string>Прокси-сервер</string>
+            <string>Прокси-сервер-1</string>
             <key>PayloadIdentifier</key>
             <string>com.example.proxy</string>
             <key>PayloadType</key>
@@ -45,7 +44,7 @@
     <key>PayloadDescription</key>
     <string>Настройка прокси-сервера для iPhone</string>
     <key>PayloadDisplayName</key>
-    <string>Прокси-сервер</string>
+    <string>Прокси-сервер-2</string>
     <key>PayloadIdentifier</key>
     <string>com.example.proxy.profile</string>
     <key>PayloadType</key>
