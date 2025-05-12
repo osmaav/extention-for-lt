@@ -23,7 +23,7 @@
                 </dict>
             </dict>
             <key>PayloadDescription</key>
-            <string>Прокси-сервер для доступа к youtube.com</string>
+            <string>Прокси</string>
             <key>PayloadDisplayName</key>
             <string>Germany</string>
             <key>PayloadIdentifier</key>
