@@ -1,52 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict>
-    <key>PayloadContent</key>
-    <array>
-        <dict>
-            <key>NetworkConfiguration</key>
+    <dict>
+        <key>PayloadContent</key>
+        <array>
             <dict>
-                <key>Network</key>
+                <key>NetworkConfiguration</key>
                 <dict>
-                    <key>HTTPProxy</key>
+                    <key>Network</key>
                     <dict>
-                        <key>HTTPEnable</key>
-                        <true/>
-                        <key>HTTPSEnable</key>
-                        <true/>
                         <key>HTTPProxy</key>
-                        <string>89.58.55.193</string>
-                        <key>HTTPPort</key>
-                        <integer>80</integer>
+                        <dict>
+                            <key>HTTPEnable</key>
+                            <true/>
+                            <key>HTTPSEnable</key>
+                            <true/>
+                            <key>HTTPProxy</key>
+                            <string>146.59.202.70</string>
+                            <key>HTTPPort</key>
+                            <integer>8081</integer>
+                            <key>HTTPAuthentication</key>
+                            <dict>
+                                <key>AuthType</key>
+                                <string>MSCHAPv2</string>
+                            </dict>
+                            <key>HTTPProxyExceptions</key>
+                            <array>
+                                <string>*.local,169.254/16,192.168/16</string>
+                            </array>
+                            <key>HTTPProxyOptions</key>
+                            <dict>
+                                <key>ProxyConfigOptions</key>
+                                <dict>
+                                    <key>ProxyFallback</key>
+                                    <true/>
+                                    <key>ProxyFallbackWhitelist</key>
+                                    <array>
+                                        <string>146.59.202.70:8081</string>
+                                        <string>146.59.202.70:8081</string>
+                                        <string>163.172.235.236:8081</string>
+                                        <string>146.59.202.70:8081</string>
+                                    </array>
+                                </dict>
+                            </dict>
+                        </dict>
                     </dict>
                 </dict>
+                <key>PayloadDescription</key>
+                <string>Прокси сервер</string>
+                <key>PayloadDisplayName</key>
+                <string>Прокси-сервер</string>
+                <key>PayloadIdentifier</key>
+                <string>com.example.proxy</string>
+                <key>PayloadType</key>
+                <string>com.apple.network.connect</string>
+                <key>PayloadUUID</key>
+                <string>12345678-1234-1234-1234-123456789012</string>
+                <key>PayloadVersion</key>
+                <integer>1</integer>
             </dict>
-            <key>PayloadDescription</key>
-            <string>Прокси</string>
-            <key>PayloadDisplayName</key>
-            <string>Germany</string>
-            <key>PayloadIdentifier</key>
-            <string>com.example.proxy</string>
-            <key>PayloadType</key>
-            <string>com.apple.network.connect</string>
-            <key>PayloadUUID</key>
-            <string>12345678-1234-1234-1234-123456789013</string>
-            <key>PayloadVersion</key>
-            <integer>1</integer>
-        </dict>
-    </array>
-    <key>PayloadDescription</key>
-    <string>Настройка прокси-сервера для iPhone</string>
-    <key>PayloadDisplayName</key>
-    <string>Прокси</string>
-    <key>PayloadIdentifier</key>
-    <string>com.example.proxy.profile</string>
-    <key>PayloadType</key>
-    <string>Configuration</string>
-    <key>PayloadUUID</key>
-    <string>9877ACF3-420D-4E25-B3B8-96C8EB82A907</string>
-    <key>PayloadVersion</key>
-    <integer>1</integer>
-</dict>
+        </array>
+        <key>PayloadDescription</key>
+        <string>Прокси</string>
+        <key>PayloadDisplayName </key>
+        <string>Прокси-сервер</string>
+        <key>PayloadIdentifier </key>
+        <string>com.example.proxy.profile</string>
+        <key>PayloadType </key>
+        <string>Configuration</string>
+        <key>PayloadUUID </key>
+        <string>9877ACF3-420D-4E25-B3B8-96C8EB82A907</string>
+        <key>PayloadVersion </key>
+        <integer>1</integer>
+    </dict>
 </plist>
