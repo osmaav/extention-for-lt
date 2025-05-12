@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>PayloadContent</key>
+    <dict>
+        <key>NetworkConfiguration</key>
+        <dict>
+            <key>Network</key>
+            <dict>
+                <key>HTTPProxy</key>
+                <dict>
+                    <key>HTTPEnable</key>
+                    <true/>
+                    <key>HTTPSEnable</key>
+                    <true/>
+                    <key>HTTPProxy</key>
+                    <string>146.59.202.70</string>
+                    <key>HTTPPort</key>
+                    <integer>8081</integer>
+                    <key>HTTPAuthentication</key>
+                    <dict>
+                        <key>AuthType</key>
+                        <string>MSCHAPv2</string>
+                    </dict>
+                </dict>
+            </dict>
+        </dict>
+    </dict>
+    <key>PayloadDescription</key>
+    <string>Прокси-сервер для доступа к youtube.com</string>
+    <key>PayloadDisplayName</key>
+    <string>Прокси-сервер</string>
+    <key>PayloadIdentifier</key>
+    <string>com.example.proxy</string>
+    <key>PayloadType</key>
+    <string>com.apple.network.connect</string>
+    <key>PayloadUUID</key>
+    <string>12345678-1234-1234-1234-123456789012</string>
+    <key>PayloadVersion</key>
+    <string>1</string>
+</dict>
+</plist>
