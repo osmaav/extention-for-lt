@@ -36,7 +36,7 @@
     <key>PayloadType</key>
     <string>com.apple.network.connect</string>
     <key>PayloadUUID</key>
-    <string>12345678-1234-1234-1234-123456789012</string>
+    <string>B27E8E10-697D-4938-8745-7FFEEEED57A0</string>
     <key>PayloadVersion</key>
     <integer>1</integer>
 </dict>
