@@ -27,18 +27,7 @@
                     </dict>
                 </dict>
             </dict>
-            <key>PayloadDescription</key>
-            <string>Прокси-сервер для доступа к youtube.com</string>
-            <key>PayloadDisplayName</key>
-            <string>Прокси-сервер-1</string>
-            <key>PayloadIdentifier</key>
-            <string>com.example.proxy</string>
-            <key>PayloadType</key>
-            <string>com.apple.network.connect</string>
-            <key>PayloadUUID</key>
-            <string>12345678-1234-1234-1234-123456789012</string>
-            <key>PayloadVersion</key>
-            <integer>1</integer>
+            
         </dict>
     </array>
     <key>PayloadDescription</key>
