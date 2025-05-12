@@ -30,7 +30,7 @@
             <key>PayloadDescription</key>
             <string>Прокси-сервер для доступа к youtube.com</string>
             <key>PayloadDisplayName</key>
-            <string>Прокси-сервер-3</string>
+            <string>Прокси-сервер</string>
             <key>PayloadIdentifier</key>
             <string>com.example.proxy</string>
             <key>PayloadType</key>
