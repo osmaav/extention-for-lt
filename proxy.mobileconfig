@@ -5,52 +5,34 @@
     <key>PayloadContent</key>
     <array>
         <dict>
-            <key>NetworkConfiguration</key>
-            <dict>
-                <key>Network</key>
-                <dict>
-                    <key>HTTPProxy</key>
-                    <dict>
-                        <key>HTTPEnable</key>
-                        <true/>
-                        <key>HTTPSEnable</key>
-                        <true/>
-                        <key>HTTPProxy</key>
-                        <string>89.58.55.193</string>
-                        <key>HTTPPort</key>
-                        <integer>80</integer>
-                        <key>ProxyFallback</key>
-                        <true/>
-                        <key>ProxyFallbackWhitelist</key>
-                        <array>
-                            <string>89.58.55.193:80</string>
-                            <string>146.59.202.70:8081</string>
-                            <string>163.172.235.236:8081</string>
-                            <string>146.59.202.70:8081</string>
-                        </array>
-                    </dict>
-                </dict>
-            </dict>
             <key>PayloadDescription</key>
             <string>Прокси-сервер для доступа к youtube.com</string>
             <key>PayloadDisplayName</key>
-            <string>Germany</string>
+            <string>Прокси-сервер</string>
             <key>PayloadIdentifier</key>
-            <string>com.example.proxy</string>
+            <string>com.apple.proxy.http.global.12345678-1234-1234-1234-123456789012</string>
             <key>PayloadType</key>
-            <string>com.apple.network.connect</string>
+            <string>com.apple.proxy.http.global</string>
             <key>PayloadUUID</key>
-            <string>12345678-1234-1234-1234-123456789013</string>
+            <string>12345678-1234-1234-1234-123456789012</string>
             <key>PayloadVersion</key>
             <integer>1</integer>
+            <key>ProxyCaptiveLoginAllowed</key>
+            <false/>
+            <key>ProxyServer</key>
+            <string>89.58.55.193</string>
+            <key>ProxyServerPort</key>
+            <integer>80</integer>
+            <key>ProxyType</key>
+            <string>Manual</string>
         </dict>
     </array>
-    <key>PayloadDescription</key>
-    <string>Настройка прокси-сервера для iPhone</string>
     <key>PayloadDisplayName</key>
-    <string>Прокси</string>
+    <string>Прокси-сервер</string>
     <key>PayloadIdentifier</key>
-    <string>com.example.proxy.profile</string>
+    <string>com.example.proxy.profile.9877ACF3-420D-4E25-B3B8-96C8EB82A907</string>
+    <key>PayloadRemovalDisallowed</key>
+    <false/>
     <key>PayloadType</key>
     <string>Configuration</string>
     <key>PayloadUUID</key>
