@@ -24,19 +24,6 @@
                                 <key>AuthType</key>
                                 <string>MSCHAPv2</string>
                             </dict>
-                            <key>HTTPProxyExceptions</key>
-                            <array>
-                                <string>*.local,169.254/16,192.168/16</string>
-                            </array>
-                            <key>ProxyFallback</key>
-                            <true/>
-                            <key>ProxyFallbackWhitelist</key>
-                            <array>
-                                <string>146.59.202.70:8081</string>
-                                <string>146.59.202.70:8081</string>
-                                <string>163.172.235.236:8081</string>
-                                <string>146.59.202.70:8081</string>
-                            </array>
                         </dict>
                     </dict>
                 </dict>
@@ -60,11 +47,11 @@
         <string>Прокси-сервер</string>
         <key>PayloadIdentifier</key>
         <string>com.example.proxy.profile</string>
-        <key>PayloadType</key>
+        <key>PayloadType </key>
         <string>Configuration</string>
-        <key>PayloadUUID</key>
+        <key>PayloadUUID </key>
         <string>9877ACF3-420D-4E25-B3B8-96C8EB82A907</string>
-        <key>PayloadVersion</key>
+        <key>PayloadVersion </key>
         <integer>1</integer>
     </dict>
 </plist>
