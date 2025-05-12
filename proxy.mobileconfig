@@ -16,27 +16,22 @@
                         <key>HTTPSEnable</key>
                         <true/>
                         <key>HTTPProxy</key>
-                        <string>146.59.202.70</string>
+                        <string>89.58.55.193</string>
                         <key>HTTPPort</key>
-                        <integer>8081</integer>
-                        <key>HTTPAuthentication</key>
-                        <dict>
-                            <key>AuthType</key>
-                            <string>MSCHAPv2</string>
-                        </dict>
+                        <integer>80</integer>
                     </dict>
                 </dict>
             </dict>
             <key>PayloadDescription</key>
             <string>Прокси-сервер для доступа к youtube.com</string>
             <key>PayloadDisplayName</key>
-            <string>Прокси-сервер</string>
+            <string>Germany</string>
             <key>PayloadIdentifier</key>
             <string>com.example.proxy</string>
             <key>PayloadType</key>
             <string>com.apple.network.connect</string>
             <key>PayloadUUID</key>
-            <string>12345678-1234-1234-1234-123456789012</string>
+            <string>12345678-1234-1234-1234-123456789013</string>
             <key>PayloadVersion</key>
             <integer>1</integer>
         </dict>
@@ -44,7 +39,7 @@
     <key>PayloadDescription</key>
     <string>Настройка прокси-сервера для iPhone</string>
     <key>PayloadDisplayName</key>
-    <string>Прокси-сервер</string>
+    <string>Прокси</string>
     <key>PayloadIdentifier</key>
     <string>com.example.proxy.profile</string>
     <key>PayloadType</key>
