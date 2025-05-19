@@ -166,7 +166,7 @@
       console.warn('UserScript: Элемент body не найден в DOM');
       return;
     }
-    new MutationObserver(() => {
+    new MutationObserver((mut) => {
       console.warn('UserScript: новых событий поступило', mut.length, new Date().toLocaleString());
       let curHref = document.location.href;
       if (oldHref !== curHref) {
