@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Check-List->xlsx for LT v3.5.1 (2025-05-19)
+// @name         Check-List->xlsx for LT v3.5.2 (2025-05-19)
 // @namespace    http://tampermonkey.net/
-// @version      "3.5.1"
-// @description  Выгружаю Чек-лист в файл xlsx (изменилась кнопка "скрыть завершенные", появляется только после отметки хотя бы одного пункта чек-листа как выполненный)
+// @version      "3.5.2"
+// @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx (версия 3.5.2 изменения: 1. изменилась кнопка "скрыть завершенные", появляется только после отметки хотя бы одного пункта чек-листа как выполненный; 2. изменил имя файла скрипта для правильной установки; 3. мелкие исправления опечаток для автоматического обновления скрипта)
 // @author       osmaav
 // @homepageURL  https://github.com/osmaav/extention-for-lt
 // @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
