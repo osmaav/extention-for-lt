@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Check-List->xlsx for LT v3.5.8 (2025-05-19)
+// @name         Check-List->xlsx for LT v3.5.9 (2025-05-19)
 // @namespace    http://tampermonkey.net/
-// @version      2025-05-19_v.3.5.8
-// @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx (версия 3.5.8 изменения: убрал лишние обработчик событий (фильтр по длине пути))
+// @version      2025-05-19_v.3.5.9
+// @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx (версия 3.5.9 изменения: убрал лишние обработчик событий (фильтр по длине пути))
 // @author       osmaav
 // @homepageURL  https://github.com/osmaav/extention-for-lt
 // @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
@@ -190,9 +190,10 @@
           console.warn('UserScript:',currtime(), 'Элемент taskPropertyWidow не является Node');
           return;
         }
-
-        if (!taskPropertyWidow.style.length) console.warn('UserScript:',currtime(), 'обрабатываем события:');
+        //if (!taskPropertyWidow.style.length) console.warn('UserScript:',currtime(), 'обрабатываем события:');
         new MutationObserver(mutations => {
+          curUrl = document.location.href;
+          if (oldUrl !== curUrl) oldUrl = curUrl;
           if (curUrl.includes('/project/') || curUrl.includes('/tasks/')) { // -- путь содержит project или tasks
                 let flOpenWindow = false;
                 let flCheckListChanged = false;
