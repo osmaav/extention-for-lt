@@ -1,13 +1,13 @@
 // ==UserScript==
-// @name         Chesk-List->xlsx for LT v3.5.0 (2025-05-19)
+// @name         Check-List->xlsx for LT v3.5.1 (2025-05-19)
 // @namespace    http://tampermonkey.net/
-// @version      3.5.0
+// @version      "3.5.1"
 // @description  Выгружаю Чек-лист в файл xlsx (изменилась кнопка "скрыть завершенные", появляется только после отметки хотя бы одного пункта чек-листа как выполненный)
-// @author       @osmaav
+// @author       osmaav
 // @homepageURL  https://github.com/osmaav/extention-for-lt
-// @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/main/userScript.js
-// @downloadURL  https://raw.githubusercontent.com/osmaav/extention-for-lt/main/userScript.js
-// @supportURL   https://raw.githubusercontent.com/osmaav/extention-for-lt/issues
+// @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
+// @downloadURL  https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
+// @supportURL   https://github.com/osmaav/extention-for-lt/issues/new/choose
 // @match        https://www.leadertask.ru/web/*
 // @grant        none
 // @run-at       document-start
