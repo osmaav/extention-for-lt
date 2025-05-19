@@ -2,14 +2,13 @@
 // @name         Check-List->xlsx for LT v3.5.4 (2025-05-19)
 // @namespace    http://tampermonkey.net/
 // @version      3.5.4
-// @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx (версия 3.5.2 изменения: 1. изменилась кнопка "скрыть завершенные", появляется только после отметки хотя бы одного пункта чек-листа как выполненный; 2. изменил имя файла скрипта для правильной установки; 3. мелкие исправления опечаток для автоматического обновления скрипта)
+// @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx (версия 3.5.4 изменения: добавил логи для отладки событий)
 // @author       osmaav
 // @homepageURL  https://github.com/osmaav/extention-for-lt
 // @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
 // @downloadURL  https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
 // @supportURL   https://github.com/osmaav/extention-for-lt/issues
 // @match        https://www.leadertask.ru/web/*
-// @grant        GM_xmlhttpRequest
 // @grant        none
 // @run-at       document-idle
 
@@ -168,28 +167,29 @@
       return;
     }
     new MutationObserver(() => {
-      //console.warn('UserScript: новых событий поступило', mut.length);
-      if (oldHref !== document.location.href) {
-        //console.warn('UserScript: путь изменился');
-        oldHref = document.location.href;
+      console.warn('UserScript: новых событий поступило', mut.length, new Date().toLocaleString());
+      let curHref = document.location.href;
+      if (oldHref !== curHref) {
+        console.warn('UserScript: путь изменился', curHref);
+        oldHref = curHref;
         const taskPropertyWidow = document.querySelector(`#modal-container >div:nth-child(3)`);
         if (!taskPropertyWidow) {
-          //console.warn('UserScript: Элемент taskPropertyWidow не найден в DOM');
+          console.warn('UserScript: Элемент taskPropertyWidow не найден в DOM', new Date().toLocaleString());
           return;
         }
         if (!(taskPropertyWidow instanceof Node)) {
-          //console.warn('UserScript: Элемент taskPropertyWidow не является Node');
+          console.warn('UserScript: Элемент taskPropertyWidow не является Node', new Date().toLocaleString());
           return;
         }
         new MutationObserver(mutations => {
-          //console.warn('UserScript: событий с измененным путем поступило', mutations.length);
+          console.warn('UserScript: событий с измененным путем поступило', mutations.length, new Date().toLocaleString());
           for (const mutation of mutations) {
             let curHref = window.location.href;
             if (curHref.includes('/project/') || curHref.includes('/tasks/')) { // -- путь содержит project или tasks
               if (taskPropertyWidow.style?.display != 'none') { // -- окно открыто
-                //console.warn('UserScript: окно свойств открыто attributeName:', mutation.attributeName, 'type:',mutation.type, 'target:',mutation.target );
+                console.warn('UserScript: окно свойств открыто attributeName:', mutation.attributeName, 'type:',mutation.type, 'target:',mutation.target );
                 if (mutation.attributeName === 'style') { // -- окно открылось
-                  //console.warn('UserScript: окно открылось');
+                  console.warn('UserScript: окно открылось', new Date().toLocaleString());
                   updateBtn(getcheckList().length);
                 }// -- окно открылось
                 if (mutation.type === 'childList') {
