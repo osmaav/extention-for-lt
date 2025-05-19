@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Check-List->xlsx for LT v3.5.4 (2025-05-19)
+// @name         Check-List->xlsx for LT v3.5.6 (2025-05-19)
 // @namespace    http://tampermonkey.net/
-// @version      3.5.4
-// @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx (версия 3.5.4 изменения: добавил логи для отладки событий)
+// @version      2025-05-19_v.3.5.6
+// @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx (версия 3.5.6 изменения: убрал лишние обработчик событий (фильтр по длине пути))
 // @author       osmaav
 // @homepageURL  https://github.com/osmaav/extention-for-lt
 // @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
@@ -15,7 +15,7 @@
 // ==/UserScript==
 ( async() => {
   'use strict';
-  //console.warn('UserScript: Скрипт запущен');
+  //console.warn('UserScript: Скрипт запущен', currtime());
   try {
     const { XLSX } = await import('https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js');
   } catch (error) {
@@ -70,9 +70,12 @@
   let myTable = [];
   let flMyStyleAdd = false;
   let oldCheckListLen = 0;
-
+  function currtime() {
+      const now = new Date();
+      const currt = now.toLocaleString() + '.' + now.getMilliseconds();
+      return currt};
   function getcheckList() {
-    //console.warn('UserScript: getcheckList is runnin', new Date().toLocaleString());
+    //console.warn('UserScript: getcheckList is runnin', currtime());
     try {
       return document.querySelectorAll('#task-prop-content div.flex.items-center.w-full.group');
     } catch (error) {console.warn('UserScript:', error);}
@@ -123,7 +126,7 @@
 
   function MyMutationObserver() {
     console.warn('UserScript: DOMContentLoaded');
-    let oldHref = '';
+    let oldHref = '-';
     const css = `
       .btnExpListToXlsx>div {
          top: 125%;
@@ -166,30 +169,32 @@
       console.warn('UserScript: Элемент body не найден в DOM');
       return;
     }
+
     new MutationObserver((mut) => {
-      console.warn('UserScript: новых событий поступило', mut.length, new Date().toLocaleString());
-      let curHref = document.location.href;
+      //console.warn('UserScript: mut событий', mut.length, currtime());
+      let curHref = document.location.href; //.split('/').slice(0, 7).join('/');
+      if (curHref.split('/').length < 7) return;
       if (oldHref !== curHref) {
-        console.warn('UserScript: путь изменился', curHref);
+        console.warn('UserScript: путь изменился', oldHref, curHref, currtime());
         oldHref = curHref;
         const taskPropertyWidow = document.querySelector(`#modal-container >div:nth-child(3)`);
         if (!taskPropertyWidow) {
-          console.warn('UserScript: Элемент taskPropertyWidow не найден в DOM', new Date().toLocaleString());
+          console.warn('UserScript: Элемент taskPropertyWidow не найден в DOM');
           return;
         }
         if (!(taskPropertyWidow instanceof Node)) {
-          console.warn('UserScript: Элемент taskPropertyWidow не является Node', new Date().toLocaleString());
+          console.warn('UserScript: Элемент taskPropertyWidow не является Node');
           return;
         }
         new MutationObserver(mutations => {
-          console.warn('UserScript: событий с измененным путем поступило', mutations.length, new Date().toLocaleString());
+          //console.warn('UserScript: mutations событий с новым путем', mutations.length, currtime());
           for (const mutation of mutations) {
-            let curHref = window.location.href;
+            //let curHref = window.location.href;
             if (curHref.includes('/project/') || curHref.includes('/tasks/')) { // -- путь содержит project или tasks
               if (taskPropertyWidow.style?.display != 'none') { // -- окно открыто
-                console.warn('UserScript: окно свойств открыто attributeName:', mutation.attributeName, 'type:',mutation.type, 'target:',mutation.target );
-                if (mutation.attributeName === 'style') { // -- окно открылось
-                  console.warn('UserScript: окно открылось', new Date().toLocaleString());
+                console.warn('UserScript: изменилось свойство окна attributeName:', mutation.attributeName, 'type:',mutation.type, 'target:',mutation.target );
+                if (mutation.attributeName === 'style' && mutation.type === 'attributes') { // -- окно открылось
+                  console.warn('UserScript: окно показано', new Date().toLocaleString());
                   updateBtn(getcheckList().length);
                 }// -- окно открылось
                 if (mutation.type === 'childList') {
@@ -212,7 +217,7 @@
           childList: true
         });
       }
-    }).observe(bodyElement, { childList: true, subtree: true });
+    }).observe(bodyElement, {subtree: true, childList: true});
   }
   if (document.readyState == 'loading') {
     // ещё загружается, ждём события
