@@ -1,28 +1,27 @@
 // ==UserScript==
-// @name         Chesk-List->xlsx for LT v3.4.4 (2025-04-29)
+// @name         Chesk-List->xlsx for LT v3.5.0 (2025-05-19)
 // @namespace    http://tampermonkey.net/
-// @version      v3.4.4
-// @description  Выгружаю Чек-лист в файл xlsx
+// @version      v3.5.0
+// @description  Выгружаю Чек-лист в файл xlsx (изменилась кнопка "скрыть завершенные", появляется только после отметки хотя бы одного пункта чек-листа как выполненный)
 // @author       @osmaav
 // @homepageURL  https://github.com/osmaav/extention-for-lt
 // @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/master/userScript.js
 // @downloadURL  https://raw.githubusercontent.com/osmaav/extention-for-lt/master/userScript.js
 // @supportURL   https://raw.githubusercontent.com/osmaav/extention-for-lt/issues
 // @match        https://www.leadertask.ru/web/*
-// @require      https://app.unpkg.com/xlsx@0.18.5/files/xlsx.mjs
 // @grant        none
-// @run-at       document-idle
+// @run-at       document-start
 
 // ==/UserScript==
 ( async() => {
   'use strict';
   //console.warn('UserScript: Скрипт запущен');
-  // try {
-  //   const { XLSX } = await import('https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js');
-  // } catch (error) {
-  //   console.warn('UserScript: ошибка загрузки модуля XLSX', error);
-  //   return;
-  // }
+  try {
+    const { XLSX } = await import('https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js');
+  } catch (error) {
+    console.warn('UserScript: ошибка загрузки модуля XLSX', error);
+    return;
+  }
 
   let btnExpListToXlsx = document.createElement('button');
   btnExpListToXlsx.classList.add('dark:bg-[#404040]',
@@ -107,12 +106,14 @@
     if (checkListLen > 2) { // -- чек-лист > 2
       if (document.querySelector('.btnExpListToXlsx')) { // -- если кнопка есть
         btnExpListToXlsx.style.display = 'block'; // -- показываем кнопку
-        //console.warn('UserScript: показали кнопку');
+        console.warn('UserScript: показали кнопку');
       } else { // -- если кнопки нет
-        if (!document.querySelector('#task-prop-content > div:nth-child(3) > div > span')) document.querySelector('#task-prop-content > div:nth-child(4) > div > span').append(btnExpListToXlsx);
-        else {document.querySelector('#task-prop-content > div:nth-child(3) > div > span').append(btnExpListToXlsx);}
+        let targetEl = document.querySelector('#task-prop-content > div:nth-child(3) > div > span');// -- ищем целевой элемент к которому добавим кнопку
+        console.warn('UserScript: targetEl найден', targetEl);
+        if (targetEl) targetEl.append(btnExpListToXlsx);
+        else {document.querySelector('#task-prop-content > div:nth-child(4) > div > span').append(btnExpListToXlsx);}
         // -- добавляем кнопку
-        //console.warn('UserScript: добавили кнопку');
+        console.warn('UserScript: добавили кнопку');
       }
     } else if (checkListLen < 3) { // чек-лист < 3
       btnExpListToXlsx.style.display = 'none';// -- скрываем кнопку
