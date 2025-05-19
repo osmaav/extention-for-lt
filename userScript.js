@@ -5,8 +5,8 @@
 // @description  Выгружаю Чек-лист в файл xlsx (изменилась кнопка "скрыть завершенные", появляется только после отметки хотя бы одного пункта чек-листа как выполненный)
 // @author       @osmaav
 // @homepageURL  https://github.com/osmaav/extention-for-lt
-// @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/master/userScript.js
-// @downloadURL  https://raw.githubusercontent.com/osmaav/extention-for-lt/master/userScript.js
+// @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/main/userScript.js
+// @downloadURL  https://raw.githubusercontent.com/osmaav/extention-for-lt/main/userScript.js
 // @supportURL   https://raw.githubusercontent.com/osmaav/extention-for-lt/issues
 // @match        https://www.leadertask.ru/web/*
 // @grant        none
