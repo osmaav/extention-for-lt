@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Check-List->xlsx for LT v3.5.7 (2025-05-19)
+// @name         Check-List->xlsx for LT v3.5.8 (2025-05-19)
 // @namespace    http://tampermonkey.net/
-// @version      2025-05-19_v.3.5.7
-// @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx (версия 3.5.7 изменения: убрал лишние обработчик событий (фильтр по длине пути))
+// @version      2025-05-19_v.3.5.8
+// @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx (версия 3.5.8 изменения: убрал лишние обработчик событий (фильтр по длине пути))
 // @author       osmaav
 // @homepageURL  https://github.com/osmaav/extention-for-lt
 // @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
@@ -126,7 +126,7 @@
 
   function MyMutationObserver() {
     console.warn('UserScript:',currtime(), 'DOMContentLoaded');
-    let oldHref = '-';
+    let oldUrl = '';
     const css = `
       .btnExpListToXlsx>div {
          top: 125%;
@@ -171,17 +171,17 @@
     }
 
     new MutationObserver(() => {
-      let curHref = document.location.href; //.split('/').slice(0, 7).join('/');
+      let curUrl = document.location.href; //.split('/').slice(0, 7).join('/');
       const taskPropertyWidow = document.querySelector(`#modal-container >div:nth-child(3)`);
-      if (curHref.split('/').length < 7) {
-        if ((taskPropertyWidow.style.display === 'none') && (oldHref.split('/').length >= 7)) console.warn('UserScript:',currtime(), 'окно скрыто', taskPropertyWidow.style);
+      if (curUrl.split('/').length < 7) {
+        //if ((oldUrl.split('/').length >= 7) && (taskPropertyWidow.style.display === 'none')) console.warn('UserScript:',currtime(), 'окно скрыто', taskPropertyWidow.style);
+        oldUrl = curUrl;
         return;
       }
-      if (!taskPropertyWidow.style.length) console.warn('UserScript:',currtime(), 'окно показано', taskPropertyWidow);
-      if (oldHref !== curHref) {
-        console.warn('UserScript:',currtime(), 'путь изменился', oldHref, curHref);
-        oldHref = curHref;
-        //const taskPropertyWidow = document.querySelector(`#modal-container >div:nth-child(3)`);
+      //if (!taskPropertyWidow.style.length) console.warn('UserScript:',currtime(), 'окно показано', taskPropertyWidow);
+      if (oldUrl !== curUrl) {
+        //console.warn('UserScript:',currtime(), 'путь изменился', oldUrl, curUrl);
+        oldUrl = curUrl;
         if (!taskPropertyWidow) {
           console.warn('UserScript:',currtime(), 'Элемент taskPropertyWidow не найден в DOM');
           return;
@@ -193,12 +193,9 @@
 
         if (!taskPropertyWidow.style.length) console.warn('UserScript:',currtime(), 'обрабатываем события:');
         new MutationObserver(mutations => {
-          if (curHref.includes('/project/') || curHref.includes('/tasks/')) { // -- путь содержит project или tasks
-//              if (taskPropertyWidow.style?.display != 'none') { // -- окно открыто
-                //console.warn('UserScript:',currtime(), 'taskPropertyWidow.style.display', mutations);
+          if (curUrl.includes('/project/') || curUrl.includes('/tasks/')) { // -- путь содержит project или tasks
                 let flOpenWindow = false;
                 let flCheckListChanged = false;
-
                 for (const mutation of mutations) { // -- обработка мутации
                   if ((mutation.attributeName === 'style') && (mutation.type === 'attributes')) { // -- окно открылось
                     flOpenWindow = true;
@@ -210,21 +207,21 @@
                     if ((mutation.target.id === 'addNewCheckListEdit' || removeLen) && (checkListLen != oldCheckListLen)) { // -- чек-лист изменился
                       //console.warn('UserScript:',currtime(), 'Чек-лист изменился oldLen:', oldCheckListLen, 'newLen:', checkListLen);
                       flCheckListChanged = true;
-//                       updateBtn(checkListLen);
                       oldCheckListLen = checkListLen;
                     } // -- чек-лист изменился
                   } // -- mutation.type === 'childList'
                 } // -- обработка мутации
 
                 if (flOpenWindow) {
-                  console.warn('UserScript:',currtime(), 'окно показано, обновляем статус кнопки');
-                  updateBtn(getcheckList().length);
+                  if (curUrl.split('/').length === 7) {
+                    console.warn('UserScript:',currtime(), 'окно показано, обновляем статус кнопки');
+                    updateBtn(getcheckList().length);
+                  }
                 }
                 if (flCheckListChanged) {
                   console.warn('UserScript:',currtime(), 'Чек-лист изменился, обновляем статус кнопки');
                   updateBtn(getcheckList().length);
                 }
-//              } // -- окно открыто
             } // -- если путь содержит project или tasks
         }).observe(taskPropertyWidow, {
           attributes: true,
