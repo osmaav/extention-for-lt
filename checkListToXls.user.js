@@ -11,7 +11,7 @@
 // @match        https://www.leadertask.ru/web/*
 // @grant        GM_xmlhttpRequest
 // @grant        none
-// @run-at       document-start
+// @run-at       document-idle
 
 // ==/UserScript==
 ( async() => {
