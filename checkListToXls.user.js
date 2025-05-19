@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         Check-List->xlsx for LT v3.5.6 (2025-05-19)
+// @name         Check-List->xlsx for LT v3.5.7 (2025-05-19)
 // @namespace    http://tampermonkey.net/
-// @version      2025-05-19_v.3.5.6
+// @version      2025-05-19_v.3.5.7
 // @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx (версия 3.5.6 изменения: убрал лишние обработчик событий (фильтр по длине пути))
 // @author       osmaav
 // @homepageURL  https://github.com/osmaav/extention-for-lt
@@ -109,14 +109,14 @@
     if (checkListLen > 2) { // -- чек-лист > 2
       if (document.querySelector('.btnExpListToXlsx')) { // -- если кнопка есть
         btnExpListToXlsx.style.display = 'block'; // -- показываем кнопку
-        console.warn('UserScript: показали кнопку');
+        console.warn('UserScript: показали кнопку', currtime());
       } else { // -- если кнопки нет
         let targetEl = document.querySelector('#task-prop-content > div:nth-child(3) > div > span');// -- ищем целевой элемент к которому добавим кнопку
-        console.warn('UserScript: targetEl найден', targetEl);
+        //console.warn('UserScript: targetEl найден', targetEl);
         if (targetEl) targetEl.append(btnExpListToXlsx);
         else {document.querySelector('#task-prop-content > div:nth-child(4) > div > span').append(btnExpListToXlsx);}
         // -- добавляем кнопку
-        console.warn('UserScript: добавили кнопку');
+        console.warn('UserScript: добавили кнопку', currtime());
       }
     } else if (checkListLen < 3) { // чек-лист < 3
       btnExpListToXlsx.style.display = 'none';// -- скрываем кнопку
@@ -173,7 +173,7 @@
     new MutationObserver((mut) => {
       //console.warn('UserScript: mut событий', mut.length, currtime());
       let curHref = document.location.href; //.split('/').slice(0, 7).join('/');
-      if (curHref.split('/').length < 7) return;
+      if (curHref.split('/').length >= 6) return;
       if (oldHref !== curHref) {
         console.warn('UserScript: путь изменился', oldHref, curHref, currtime());
         oldHref = curHref;
@@ -192,8 +192,8 @@
             //let curHref = window.location.href;
             if (curHref.includes('/project/') || curHref.includes('/tasks/')) { // -- путь содержит project или tasks
               if (taskPropertyWidow.style?.display != 'none') { // -- окно открыто
-                console.warn('UserScript: изменилось свойство окна attributeName:', mutation.attributeName, 'type:',mutation.type, 'target:',mutation.target );
-                if (mutation.attributeName === 'style' && mutation.type === 'attributes') { // -- окно открылось
+                //console.warn('UserScript: изменилось свойство окна attributeName:', mutation.attributeName, 'type:',mutation.type, 'target:',mutation.target );
+                if ((mutation.attributeName === 'style') && (mutation.type === 'attributes')) { // -- окно открылось
                   console.warn('UserScript: окно показано', new Date().toLocaleString());
                   updateBtn(getcheckList().length);
                 }// -- окно открылось
