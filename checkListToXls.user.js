@@ -9,6 +9,7 @@
 // @downloadURL  https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
 // @supportURL   https://github.com/osmaav/extention-for-lt/issues
 // @match        https://www.leadertask.ru/web/*
+// @grant        GM_xmlhttpRequest
 // @grant        none
 // @run-at       document-start
 
