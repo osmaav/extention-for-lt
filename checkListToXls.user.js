@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Check-List->xlsx for LT
 // @namespace    http://tampermonkey.net/
-// @version      2025-05-20_v.3.6.1
-// @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx (версия 3.6.1 - изменил имя для корректного обновления скрипта)
+// @version      2025-05-20_v.3.6.2
+// @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx (версия 3.6.2 - оптимизировал код, исправил ошибки, сделал задержку обработки частых обращений к функции)
 // @author       osmaav
 // @homepageURL  https://github.com/osmaav/extention-for-lt
 // @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
@@ -101,8 +101,10 @@
     });
   }
 
-  function updateBtn(checkListLen) {
-    //console.warn('UserScript:',currtime(), 'checkListLen', checkListLen);
+
+  function updateBtn() {
+    let checkListLen = getcheckList().length;
+    //console.warn('UserScript:', currtime(), 'updateBtn is running...');
     if (checkListLen > 2) { // -- чек-лист > 2
       if (document.querySelector('.btnExpListToXlsx')) { // -- если кнопка есть
         btnExpListToXlsx.style.display = 'block'; // -- показываем кнопку
@@ -117,7 +119,7 @@
       }
     } else if (checkListLen < 3) { // чек-лист < 3
       btnExpListToXlsx.style.display = 'none';// -- скрываем кнопку
-      //console.warn('UserScript:',currtime(), 'скрыли кнопку');
+      console.warn('UserScript:', currtime(), 'скрыли кнопку');
     }
   }
 
@@ -160,67 +162,70 @@
     style.type = 'text/css';
     style.appendChild(document.createTextNode(css));
     document.head.appendChild (style);
-    //console.warn('UserScript:',currtime(), 'скрипт запущен');
-    const bodyElement = document.querySelector('body');
-    if (!bodyElement) {
-      console.warn('UserScript:',currtime(), 'Элемент body не найден в DOM');
+    const app = document.querySelector('#app');
+
+    if (!app) {
+      console.warn('UserScript:', currtime(), 'Элемент app не найден в DOM');
       return;
     }
 
+    function throttle(fn, delay = 1000) {
+      //console.warn('UserScript:', currtime(), 'throttle is running...');
+      let lastCallTime = 0;
+      return function(...args) {
+        const currentTime = Date.now();
+        if (currentTime - lastCallTime >= delay) {
+          console.warn('UserScript:', currtime(), 'fn is running...', fn, args);
+          fn.apply(this, args);
+          lastCallTime = currentTime;
+        }
+      };
+    }
+
     new MutationObserver(() => {
-      let curUrl = document.location.href; //.split('/').slice(0, 7).join('/');
-      const taskPropertyWidow = document.querySelector(`#modal-container >div:nth-child(3)`);
-      if (curUrl.split('/').length < 7) {
-        //if ((oldUrl.split('/').length >= 7) && (taskPropertyWidow.style.display === 'none')) console.warn('UserScript:',currtime(), 'окно скрыто', taskPropertyWidow.style);
-        oldUrl = curUrl;
-        return;
-      }
-      //if (!taskPropertyWidow.style.length) console.warn('UserScript:',currtime(), 'окно показано', taskPropertyWidow);
-      if (oldUrl !== curUrl) {
-        //console.warn('UserScript:',currtime(), 'путь изменился', oldUrl, curUrl);
+      let curUrl = document.location.href;
+//       const taskPropertyWidow = document.querySelector(`#modal-container`);
+      const taskPropertyWidow = document.querySelector(`#modal-container`);
+      if (oldUrl != curUrl) {
+//        console.warn('UserScript:',currtime(), 'путь изменился', oldUrl, curUrl);
         oldUrl = curUrl;
         if (!taskPropertyWidow) {
-          console.warn('UserScript:',currtime(), 'Элемент taskPropertyWidow не найден в DOM');
+          console.warn('UserScript:', currtime(), 'taskPropertyWidow не найден', taskPropertyWidow);
           return;
         }
         if (!(taskPropertyWidow instanceof Node)) {
-          console.warn('UserScript:',currtime(), 'Элемент taskPropertyWidow не является Node');
+          console.warn('UserScript:',currtime(), 'taskPropertyWidow не является Node');
           return;
         }
         //if (!taskPropertyWidow.style.length) console.warn('UserScript:',currtime(), 'обрабатываем события:');
-        new MutationObserver(mutations => {
-          curUrl = document.location.href;
-          if (oldUrl !== curUrl) oldUrl = curUrl;
-          if (curUrl.includes('/project/') || curUrl.includes('/tasks/')) { // -- путь содержит project или tasks
-                let flOpenWindow = false;
-                let flCheckListChanged = false;
-                for (const mutation of mutations) { // -- обработка мутации
-                  if ((mutation.attributeName === 'style') && (mutation.type === 'attributes')) { // -- окно открылось
-                    flOpenWindow = true;
-                  }// -- окно открылось
-                  if (mutation.type === 'childList') {
-                    const removeLen = mutation.removedNodes[0]?.textContent.length;
-                    //console.warn('UserScript:',currtime(), 'событие childList','target:',mutation.target);
-                    let checkListLen = getcheckList().length;
-                    if ((mutation.target.id === 'addNewCheckListEdit' || removeLen) && (checkListLen != oldCheckListLen)) { // -- чек-лист изменился
-                      //console.warn('UserScript:',currtime(), 'Чек-лист изменился oldLen:', oldCheckListLen, 'newLen:', checkListLen);
-                      flCheckListChanged = true;
-                      oldCheckListLen = checkListLen;
-                    } // -- чек-лист изменился
-                  } // -- mutation.type === 'childList'
-                } // -- обработка мутации
+        const throttledUpdateBtn = throttle(updateBtn, 1000);
 
-                if (flOpenWindow) {
-                  if (curUrl.split('/').length === 7) {
-                    console.warn('UserScript:',currtime(), 'окно показано, обновляем статус кнопки');
-                    updateBtn(getcheckList().length);
-                  }
-                }
-                if (flCheckListChanged) {
-                  console.warn('UserScript:',currtime(), 'Чек-лист изменился, обновляем статус кнопки');
-                  updateBtn(getcheckList().length);
-                }
-            } // -- если путь содержит project или tasks
+        new MutationObserver(mutations => {
+//           console.warn('UserScript:', currtime(), 'обрабатываем события:', mutations);
+          // -- путь содержит project или tasks
+          if (curUrl.includes('/project/') || curUrl.includes('/tasks/')) {
+            //console.warn('UserScript:', currtime(), 'путь содержит project или tasks', curUrl);
+            // -- обработка событий
+            for (const mutation of mutations) {
+              if ((mutation.attributeName === 'style') && (mutation.type === 'attributes')) { // -- окно открылось
+                if ((curUrl.includes('/project/')) && (curUrl.split('/').length === 7)) {
+                  throttledUpdateBtn();
+                } // -- путь содержит project
+                if ((curUrl.includes('/tasks/')) && (curUrl.split('/').length === 6)) {
+                  throttledUpdateBtn();
+                }// -- путь содержит tasks
+              }// -- окно открылось
+              if (mutation.type === 'childList') {
+                const removeLen = mutation.removedNodes[0]?.textContent.length;
+                //console.warn('UserScript:', currtime(), 'событие childList','target:',mutation.target);
+                let checkListLen = getcheckList().length;
+                if ((mutation.target.id === 'addNewCheckListEdit' || removeLen) && (checkListLen != oldCheckListLen)) { // -- чек-лист изменился
+                  //console.warn('UserScript:', currtime(), 'Чек-лист изменился oldLen:', oldCheckListLen, 'newLen:', checkListLen);
+                  throttledUpdateBtn();
+                } // -- чек-лист изменился
+              } // -- mutation.type === 'childList'
+            }// -- обработка событий
+          } // -- если путь содержит project или tasks
         }).observe(taskPropertyWidow, {
           attributes: true,
           subtree: true,
@@ -229,11 +234,11 @@
         });
 
       }
-    }).observe(bodyElement, {subtree: true, attributeFilter: ['style'], childList: true});
+    }).observe(app, {subtree: true, attributeFilter: ['style'], childList: true});
   }
   if (document.readyState == 'loading') {
     // ещё загружается, ждём события
-    document.addEventListener('DOMContentLoaded',MyMutationObserver());
+    document.addEventListener('DOMContentLoaded', MyMutationObserver());
   } else {
     // DOM готов!
     MyMutationObserver();
