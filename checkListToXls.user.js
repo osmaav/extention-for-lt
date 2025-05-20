@@ -2,7 +2,7 @@
 // @name         Check-List->xlsx for LT
 // @namespace    http://tampermonkey.net/
 // @version      2025-05-20_v.3.6.1
-// @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx (версия 3.6.0 изменения: изменил классы под обновленный стиль)
+// @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx (версия 3.6.1 - изменил имя для корректного обновления скрипта)
 // @author       osmaav
 // @homepageURL  https://github.com/osmaav/extention-for-lt
 // @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
