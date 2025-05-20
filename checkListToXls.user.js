@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Check-List->xlsx for LT v3.5.9 (2025-05-19)
+// @name         Check-List->xlsx for LT v3.6.0 (2025-05-20)
 // @namespace    http://tampermonkey.net/
-// @version      2025-05-19_v.3.5.9
-// @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx (версия 3.5.9 изменения: убрал лишние обработчик событий (фильтр по длине пути))
+// @version      2025-05-20_v.3.6.0
+// @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx (версия 3.6.0 изменения: изменил классы под обновленный стиль)
 // @author       osmaav
 // @homepageURL  https://github.com/osmaav/extention-for-lt
 // @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
@@ -24,19 +24,16 @@
   }
 
   let btnExpListToXlsx = document.createElement('button');
-  btnExpListToXlsx.classList.add('dark:bg-[#404040]',
-                                 'border-[#1B1B1C0D]',
-                                 'bg-[#F5F5F5]',
+  btnExpListToXlsx.classList.add('dark:bg-[#1B1B1C]/[0.5]',
+                                 'dark:hover:bg-[#1B1B1C]/[0.8]',
+                                 'bg-gray-200',
+                                 'hover:bg-gray-300',
                                  'text-[14px]',
                                  'leading-[16px]',
                                  'py-[4px]',
                                  'px-[8px]',
-                                 'dark:border-[#FFFFFF0D]',
-                                 'border-[1px]',
                                  'border-solid',
                                  'rounded-[6px]',
-                                 'hover:bg-[#E8E8E8]',
-                                 'hover:dark:bg-[#333333]',
                                  'btnExpListToXlsx');
   btnExpListToXlsx.style.marginLeft = '5px';
   btnExpListToXlsx.style.position = 'relative';//
