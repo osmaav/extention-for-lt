@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Check-List->xlsx for LT v3.6.0 (2025-05-20)
+// @name         Check-List->xlsx for LT
 // @namespace    http://tampermonkey.net/
 // @version      2025-05-20_v.3.6.0
 // @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx (версия 3.6.0 изменения: изменил классы под обновленный стиль)
