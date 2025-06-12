@@ -3,7 +3,7 @@
 // @namespace    http://tampermonkey.net
 // @version      2025-06-12_v.3.7.1
 // @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx
-// @  Версия 3.7.1 
+// @  Версия 3.7.1
 // @  - Производительность: оптимизировать использование наблюдателей и сокращать количество операций над DOM.
 // @  - Безопасность: контролировать ресурсные утечки и обеспечить совместимость с будущими изменениями сайта.
 // @  - Интерфейс: улучшать взаимодействия пользователя и информативность уведомлений.
@@ -43,7 +43,7 @@
   function addStyles() {
     const styles = `
       .btnExpListToXlsx {
-        background-color: rgba(0, 0, 0, 0.2);
+        background-color: rgba(0, 255, 0, 0.2);
         border-radius: 6px;
         padding: 4px 8px;
         font-size: 14px;
@@ -53,15 +53,15 @@
         margin-left: 5px;
         height: 1.6rem;
         width: 4.6rem;
+        box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.3);
       }
 
       .btnExpListToXlsx:hover {
-        background-color: rgba(0, 0, 0, 0.4);
+        background-color: rgba(0, 255, 0, 0.1);
       }
 
       .btnExpListToXlsx:active {
         transform: scale(0.95);
-        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
       }
     `;
 
@@ -112,15 +112,17 @@
     const button = document.querySelector('.btnExpListToXlsx');
     if (checkListSize > 2) {
       if (!button) {
-        let targetEl = document.querySelector('#modal-container > div:nth-child(5) > div.flex > div > div:nth-child(1) > div:nth-child(2) > div > div div:nth-child(3) > div > span');
+        let targetEl = document.querySelector('#modal-container > div:nth-child(5) > div.flex > div > div > div:nth-child(2) > div > div > div:nth-child(2) > div:nth-child(2) > span');
         if (targetEl) {
           targetEl.append(createDownloadButton());
-        } else {
-          targetEl = document.querySelector('#task-prop-content > div:nth-child(3) > div > span');
+        }
+        else {
+          targetEl = document.querySelector('#modal-container #task-prop-content > div:nth-child(3) > div > span');
           if (targetEl) {
             targetEl.append(createDownloadButton());
           } else {
-            document.querySelector('#task-prop-content > div:nth-child(4) > div > span').append(createDownloadButton());}
+            document.querySelector('#modal-container #task-prop-content > div:nth-child(4) div span').append(createDownloadButton());
+          }
         }
       }
     } else {
