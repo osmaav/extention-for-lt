@@ -1,13 +1,11 @@
 // ==UserScript==
 // @name         Download Button for LT
 // @namespace    http://tampermonkey.net
-// @version      2025-06-12_v.3.7.1
+// @version      2025-06-13_v.3.7.2
 // @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx
-// @  Версия 3.7.1
+// @  Версия 3.7.2
 // @  - Производительность: оптимизировать использование наблюдателей и сокращать количество операций над DOM.
-// @  - Безопасность: контролировать ресурсные утечки и обеспечить совместимость с будущими изменениями сайта.
-// @  - Интерфейс: улучшать взаимодействия пользователя и информативность уведомлений.
-// @  - Кодовая база: уменьшить дублирование кода и упростить структуру CSS-стилей.
+// @  - Вычисления: скорректировал получение списка для исключения дубликатов.
 // @author       osmaav
 // @homepageURL  https://github.com/osmaav/extention-for-lt
 // @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
@@ -23,10 +21,10 @@
   'use strict';
 
   // Подключение библиотеки XLSX через создание тега <script>
-  function loadLibrary(callback) {
+  function loadLibrary() {
     const script = document.createElement('script');
     script.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
-    script.onload = callback;
+    //script.onload = callback;
     document.head.appendChild(script);
   }
 
@@ -104,13 +102,19 @@
 
   // Сбор чек-листа
   function getCheckList() {
-    return document.querySelectorAll('#task-prop-content div.flex.items-center.w-full.group');
+    // Получаем все подходящие элементы
+    const elements = document.querySelectorAll('#task-prop-content div.flex.items-center.w-full.group');
+
+    // Определяем индекс середины (делим длину массива пополам)
+    const halfIndex = Math.floor(elements.length / 2);
+
+    // Получаем первую половину элементов
+    return [...elements].slice(0, halfIndex);
   }
 
   // Управление видимостью кнопки
-  function manageButtonVisibility(checkListSize) {
+  function manageButtonVisibility() {
     const button = document.querySelector('.btnExpListToXlsx');
-    if (checkListSize > 2) {
       if (!button) {
         let targetEl = document.querySelector('#modal-container > div:nth-child(5) > div.flex > div > div > div:nth-child(2) > div > div > div:nth-child(2) > div:nth-child(2) > span');
         if (targetEl) {
@@ -125,11 +129,6 @@
           }
         }
       }
-    } else {
-      if (button) {
-        button.remove();
-      }
-    }
   }
 
   // Контролирует поведение кнопки при изменениях
@@ -143,52 +142,90 @@
     exportToXlsx(taskName);
   }
 
-  // Основной обработчик изменений
-  function processChanges(urlChanged, checkListSizeChanged) {
-    if (urlChanged || checkListSizeChanged) {
-      manageButtonVisibility(getCheckList().length);
-    }
-  }
-
   // Настройка наблюдателя
+  // Функция для отслеживания изменений в DOM дереве
   function setupMutationObserver() {
-    const observerConfig = { attributes: true, childList: true, subtree: true };
+    const modalContainer = document.querySelector('#modal-container');
 
-    const modalObserver = new MutationObserver((mutations) => {
-      let urlChanged = false;
-      let checkListSizeChanged = false;
+    if (!modalContainer) {
+      console.error('UserScript: Контейнер #modal-container не найден');
+      return;
+    }
 
-      mutations.forEach((mutation) => {
-        if (mutation.type === 'childList') {
-          const checkList = getCheckList();
-          const currentCheckListSize = checkList.length;
-          if (currentCheckListSize !== oldCheckListSize) {
-            checkListSizeChanged = true;
-            oldCheckListSize = currentCheckListSize;
+    let prevLocation = location.pathname; // Храним начальную позицию URL
+
+    const observer = new MutationObserver((mutations) => {
+      // Работаем только с последним событием (последним элементом массива)
+      const lastMutation = mutations[mutations.length - 1];
+
+      if (lastMutation.type === 'childList') {
+        // Находим третьего и пятого ребенка заново после изменений
+        const thirdChild = modalContainer.children[2]; // :nth-child(3)
+        const fifthChild = modalContainer.children[4]; // :nth-child(5)
+        let windowOpen = false;
+
+        if (thirdChild) {
+          const display = window.getComputedStyle(thirdChild).display;
+          if (display !== 'none') {
+            console.log(`UserScript: Окно [3] открыто: ${display}`);
+            windowOpen = true;
           }
         }
-      });
 
-      const currentUrlPath = location.pathname;
-      if (previousUrlPath !== currentUrlPath) {
-        urlChanged = true;
-        previousUrlPath = currentUrlPath;
+        if (fifthChild) {
+          const display = window.getComputedStyle(fifthChild).display;
+          if (display !== 'none') {
+            console.log(`UserScript: Окно [5] открыто : ${display}`);
+            windowOpen = true;
+
+          }
+        }
+        if (windowOpen) {
+          // Получаем текущий путь currentUrl
+          const currentUrlPath = location.pathname;
+          if (previousUrlPath !== currentUrlPath) {
+            console.log('UserScript: измененился URL', currentUrlPath);
+            previousUrlPath = currentUrlPath;
+          }
+          //показываю кнопку
+          manageButtonVisibility();
+        }
       }
-
-      processChanges(urlChanged, checkListSizeChanged);
     });
 
-    modalObserver.observe(document.body, observerConfig);
+    // Следим за изменениями внутри #modal-container
+    observer.observe(modalContainer, { childList: true, subtree: true, attributeFilter: ['style'] });
+    //console.log('UserScript: Наблюдатель запущен');
+
+//     // Периодическая проверка URL
+//     const intervalId = setInterval(() => {
+//       //console.log('UserScript: таймер запущен', intervalId);
+//       const currentLocation = location.pathname;
+//       if (prevLocation !== currentLocation) {
+//         console.log('UserScript: измененился URL', currentLocation);
+//         prevLocation = currentLocation;
+//         console.log('UserScript: Наблюдатель отключен из-за изменения URL');
+//         observer.disconnect(); // Отключение наблюдателя
+//         // Следим за изменениями внутри #modal-container
+//         observer.observe(modalContainer, { childList: true, subtree: true, attributeFilter: ['style'] });
+//       }
+//     }, 1000); // Проверять URL каждые полсекунды
 
     // Освобождение ресурса при выходе со страницы
     window.addEventListener('beforeunload', () => {
-      modalObserver.disconnect();
+      console.log('UserScript: Наблюдатель отключен');
+      observer.disconnect(); // Отключение наблюдателя
+      //clearInterval(intervalId); // Остановка интервала
     });
   }
 
+
+
   // Основной поток инициализации
   function init() {
+    // Настройка CSS для кнопки
     addStyles();
+    // Запускаем наблюдатель
     setupMutationObserver();
   }
 
