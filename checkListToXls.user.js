@@ -1,11 +1,10 @@
 // ==UserScript==
 // @name         Download Button for LT
 // @namespace    http://tampermonkey.net
-// @version      2025-06-13_v.3.7.5
+// @version      2025-06-13_v.3.8.0
 // @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx
-// @  Версия 3.7.5
-// @  - исправления: 1. скорректировал адрес // @match https://www.beta.leadertask.ru/*
-// @                 2. добавил иконку https://www.google.com/s2/favicons?sz=64&domain=leadertask.ru
+// @  Версия 3.8.0
+// @  добавил комментарии к ключевым участкам кода
 // @author       osmaav
 // @homepageURL  https://github.com/osmaav/extention-for-lt
 // @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
@@ -18,29 +17,32 @@
 // @run-at       document-idle
 // ==/UserScript==
 
+// Этот скрипт добавляет кнопку "Скачать" на веб-страницу Leadertask, позволяющую экспортировать чек-лист в файл формата xlsx.
+// Скрипт подключается к библиотеке XLSX, обрабатывает события и контролирует отображение кнопки экспорта.
+
 (async () => {
   'use strict';
 
-  // Подключение библиотеки XLSX через создание тега <script>
+  // 1. Подключение библиотеки XLSX
   function loadLibrary() {
     const script = document.createElement('script');
     script.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
-    //script.onload = callback;
     document.head.appendChild(script);
   }
 
-  // Глобально устанавливаем XLSX после успешного импорта
+  // Устанавливаем глобальное значение XLSX после успешной загрузки библиотеки
   loadLibrary(() => {
     window.XLSX = window.XLSX || {};
   });
 
-  // Кэширование текущих значений для сравнения
+  // 2. Начальные настройки
   let oldCheckListSize = 0;
   let previousUrlPath = '';
 
-  // Настройка CSS для кнопки
+  // 3. Добавление стилей для кнопки скачивания
   function addStyles() {
     const styles = `
+      /* Стили для кнопки */
       .btnExpListToXlsx {
         background-color: rgba(0, 255, 0, 0.2);
         border-radius: 6px;
@@ -70,7 +72,7 @@
     document.head.appendChild(styleElem);
   }
 
-  // Функционал кнопки
+  // 4. Создание кнопки скачивания
   function createDownloadButton() {
     const button = document.createElement('button');
     button.classList.add('btnExpListToXlsx');
@@ -79,7 +81,7 @@
     return button;
   }
 
-  // Генерирует имя файла
+  // 5. Генерация имени файла
   function generateFilename(taskName) {
     const dateStr = new Date().toLocaleDateString();
     return `CheckList-from-${taskName}-${dateStr}.xlsx`
@@ -87,7 +89,7 @@
       .replaceAll(':', '.');
   }
 
-  // Экспорт чек-листа в Excel
+  // 6. Экспорт чек-листа в Excel
   function exportToXlsx(taskName) {
     const rows = Array.from(getCheckList()).map((el, idx) => ({
       idx: idx + 1,
@@ -101,134 +103,95 @@
     XLSX.writeFile(book, filename, { compression: true });
   }
 
-  // Сбор чек-листа
+  // 7. Получение элементов чек-листа
   function getCheckList() {
-    // Получаем все подходящие элементы
     const elements = document.querySelectorAll('#task-prop-content div.flex.items-center.w-full.group');
     return [...elements];
   }
 
-  // Управление видимостью кнопки
+  // 8. Управление видимостью кнопки
   function manageButtonVisibility() {
     const button = document.querySelector('.btnExpListToXlsx');
-      if (!button) {
-        let targetEl = document.querySelector('#modal-container > div:nth-child(5) > div.flex > div > div > div:nth-child(2) > div > div > div:nth-child(2) > div:nth-child(2) > span');
+    if (!button) {
+      let targetEl = document.querySelector('#modal-container > div:nth-child(5) > div.flex > div > div > div:nth-child(2) > div > div > div:nth-child(2) > div:nth-child(2) > span');
+      if (targetEl) {
+        targetEl.append(createDownloadButton());
+      } else {
+        targetEl = document.querySelector('#modal-container #task-prop-content > div:nth-child(3) > div > span');
         if (targetEl) {
           targetEl.append(createDownloadButton());
-        }
-        else {
-          targetEl = document.querySelector('#modal-container #task-prop-content > div:nth-child(3) > div > span');
-          if (targetEl) {
-            targetEl.append(createDownloadButton());
-          } else {
-            document.querySelector('#modal-container #task-prop-content > div:nth-child(4) div span').append(createDownloadButton());
-          }
+        } else {
+          document.querySelector('#modal-container #task-prop-content > div:nth-child(4) div span').append(createDownloadButton());
         }
       }
+    }
   }
 
-  // Контролирует поведение кнопки при изменениях
+  // 9. Обработка кликов на кнопке
   function handleDownloadClick(event) {
     event.preventDefault();
     const taskContainer = document.querySelector('.user_child_customer_custom div>div');
     const taskName = taskContainer.outerText
-    .replaceAll(': ', '_')
-    .replaceAll('/', '_')
-    .replaceAll(' ', '_');
+      .replaceAll(': ', '_')
+      .replaceAll('/', '_')
+      .replaceAll(' ', '_');
     exportToXlsx(taskName);
   }
 
-  // Настройка наблюдателя
-  // Функция для отслеживания изменений в DOM дереве
+  // 10. Установка наблюдателя за изменениями DOM
   function setupMutationObserver() {
-    const modalContainer = document.querySelector('#modal-container');
-
-    if (!modalContainer) {
+    const modalContainer = document.querySelector('#modal-container'); // Найти контейнер с идентификатором "#modal-container"
+  
+    if (!modalContainer) { // Проверьте наличие контейнера
       console.error('UserScript: Контейнер #modal-container не найден');
       return;
     }
-
-    let prevLocation = location.pathname; // Храним начальную позицию URL
-
-    const observer = new MutationObserver((mutations) => {
-      // Работаем только с последним событием (последним элементом массива)
-      const lastMutation = mutations[mutations.length - 1];
-
-      if (lastMutation.type === 'childList') {
-        // Находим третьего и пятого ребенка заново после изменений
-        const thirdChild = modalContainer.children[2]; // :nth-child(3)
-        const fifthChild = modalContainer.children[4]; // :nth-child(5)
-        let windowOpen = false;
-
-        if (thirdChild) {
-          const display = window.getComputedStyle(thirdChild).display;
-          if (display !== 'none') {
-            console.log(`UserScript: Окно [3] открыто: ${display}`);
-            windowOpen = true;
-          }
+  
+    let prevLocation = location.pathname; // Сохранить исходный путь URL для последующего сравнения
+  
+    const observer = new MutationObserver((mutations) => { // Создать экземпляр наблюдателя
+      const lastMutation = mutations[mutations.length - 1]; // Получить последнее событие изменения
+  
+      if (lastMutation.type === 'childList') { // Если произошло изменение списка дочерних элементов
+        const thirdChild = modalContainer.children[2]; // Найти третий элемент (#modal-container > nth-child(3))
+        const fifthChild = modalContainer.children[4]; // Найти пятый элемент (#modal-container > nth-child(5))
+        let windowOpen = false; // Флаг для проверки открытия окон
+  
+        if (thirdChild && window.getComputedStyle(thirdChild).display !== 'none') { // Проверить видимость третьего элемента
+          windowOpen = true; // Открытие подтверждено
         }
-
-        if (fifthChild) {
-          const display = window.getComputedStyle(fifthChild).display;
-          if (display !== 'none') {
-            console.log(`UserScript: Окно [5] открыто : ${display}`);
-            windowOpen = true;
-
-          }
+  
+        if (fifthChild && window.getComputedStyle(fifthChild).display !== 'none') { // Проверить видимость пятого элемента
+          windowOpen = true; // Открытие подтверждено
         }
-        if (windowOpen) {
-          // Получаем текущий путь currentUrl
-          const currentUrlPath = location.pathname;
-          if (previousUrlPath !== currentUrlPath) {
-            console.log('UserScript: измененился URL', currentUrlPath);
-            previousUrlPath = currentUrlPath;
+  
+        if (windowOpen) { // Если одно из окон открыто
+          const currentUrlPath = location.pathname; // Текущий путь URL
+          if (previousUrlPath !== currentUrlPath) { // Проверить изменение пути
+            previousUrlPath = currentUrlPath; // Обновляем предыдущее значение пути
           }
-          //показываю кнопку
-          manageButtonVisibility();
+          manageButtonVisibility(); // Показываем кнопку скачивания
         }
       }
     });
-
-    // Следим за изменениями внутри #modal-container
-    observer.observe(modalContainer, { childList: true, subtree: true, attributeFilter: ['style'] });
-    //console.log('UserScript: Наблюдатель запущен');
-
-//     // Периодическая проверка URL
-//     const intervalId = setInterval(() => {
-//       //console.log('UserScript: таймер запущен', intervalId);
-//       const currentLocation = location.pathname;
-//       if (prevLocation !== currentLocation) {
-//         console.log('UserScript: измененился URL', currentLocation);
-//         prevLocation = currentLocation;
-//         console.log('UserScript: Наблюдатель отключен из-за изменения URL');
-//         observer.disconnect(); // Отключение наблюдателя
-//         // Следим за изменениями внутри #modal-container
-//         observer.observe(modalContainer, { childList: true, subtree: true, attributeFilter: ['style'] });
-//       }
-//     }, 1000); // Проверять URL каждые полсекунды
-
-    // Освобождение ресурса при выходе со страницы
-    window.addEventListener('beforeunload', () => {
-      console.log('UserScript: Наблюдатель отключен');
-      observer.disconnect(); // Отключение наблюдателя
-      //clearInterval(intervalId); // Остановка интервала
+  
+    observer.observe(modalContainer, { childList: true, subtree: true, attributeFilter: ['style'] }); // Включить наблюдение за изменением детей и стилями
+  
+    window.addEventListener('beforeunload', () => { // Убедимся, что наблюдатель отключится при закрытии страницы
+      observer.disconnect();
     });
   }
 
-
-
-  // Основной поток инициализации
+  // 11. Основная логика запуска
   function init() {
-    // Настройка CSS для кнопки
     addStyles();
-    // Запускаем наблюдатель
     setupMutationObserver();
   }
 
-  // Запускаем основной процесс
+  // 12. Инициализация основного процесса
   if (document.readyState === 'interactive' || document.readyState === 'complete') {
-    init(); // Если документ уже загружен, запускаем сразу
+    init();
   } else {
-    document.addEventListener('DOMContentLoaded', init); // Иначе ждем завершения загрузки
+    document.addEventListener('DOMContentLoaded', init);
   }
 })();
