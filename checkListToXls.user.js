@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Download Button for LT
 // @namespace    http://tampermonkey.net
-// @version      2025-08-06_v.3.8.2
+// @version      2025-08-06_v.3.9
 // @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx
-// @  Версия 3.8.2
+// @  Версия 3.9
 // @  изменил селектор в function getCheckList() '#task-prop-content [contenteditable="true"]');
 // @author       osmaav
 // @homepageURL  https://github.com/osmaav/extention-for-lt
@@ -104,7 +104,7 @@
 
   // 7. Получение элементов чек-листа
   function getCheckList() {
-    const elements = document.querySelectorAll('#task-prop-content div.flex.items-center.w-full.group');
+    const elements = document.querySelectorAll('#task-prop-content [contenteditable="true"]');
     return [...elements];
   }
 
