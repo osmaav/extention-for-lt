@@ -28,11 +28,11 @@
 
 3. На странице chrome://extensions/ обязательно включите "Режим разработчика" в правом верхнем углу.
 
-<img width="1653" height="993" alt="image" src="https://github.com/user-attachments/assets/1c336273-5509-4507-a0d2-650e959d0808" />
+<img width="1649" height="194" alt="image" src="https://github.com/user-attachments/assets/cc5c16d0-a59b-4cdf-ba30-2acbf491712c" />
 
 5. На странице "Сведения" расширения Tampermonkey необходимо включить параметр "Разрешить пользовательские скрипты..."
 
-<img width="1653" height="993" alt="image" src="https://github.com/user-attachments/assets/ec055d85-12cb-4fff-bb0e-f82b0489ec36" />
+<img width="693" height="742" alt="image" src="https://github.com/user-attachments/assets/d6feb46a-754e-4993-837c-6b023bcc5b85" />
 
 6. Теперь перейдите по ссылке https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js и нажмите кнопку «Install script».
 
