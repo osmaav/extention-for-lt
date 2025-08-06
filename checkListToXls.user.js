@@ -1,17 +1,17 @@
 // ==UserScript==
 // @name         Download Button for LT
 // @namespace    http://tampermonkey.net
-// @version      2025-06-13_v.3.8.0
+// @version      2025-06-13_v.3.8.1
 // @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx
-// @  Версия 3.8.0
-// @  добавил комментарии к ключевым участкам кода
+// @  Версия 3.8.1
+// @  исправил путь https://beta.leadertask.ru/*
 // @author       osmaav
 // @homepageURL  https://github.com/osmaav/extention-for-lt
 // @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
 // @downloadURL  https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
 // @supportURL   https://github.com/osmaav/extention-for-lt/issues
 // @match        https://www.leadertask.ru/web/*
-// @match        https://www.beta.leadertask.ru/*
+// @match        https://beta.leadertask.ru/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=leadertask.ru
 // @grant        none
 // @run-at       document-idle
