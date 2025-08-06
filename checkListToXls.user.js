@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         Download Button for LT
 // @namespace    http://tampermonkey.net
-// @version      2025-08-06_v.3.9
+// @version      2025-08-06_v.3.9.1
 // @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx
-// @  Версия 3.9
-// @  изменил селектор в function getCheckList() '#task-prop-content [contenteditable="true"]');
+// @  Версия 3.9.1
+// @  добавил проверку на пустой чек-лист
 // @author       osmaav
 // @homepageURL  https://github.com/osmaav/extention-for-lt
 // @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
@@ -90,7 +90,9 @@
 
   // 6. Экспорт чек-листа в Excel
   function exportToXlsx(taskName) {
-    const rows = Array.from(getCheckList()).map((el, idx) => ({
+    const checklist = getCheckList();
+    if (!checklist.length) return;
+    const rows = Array.from(checklist).map((el, idx) => ({
       idx: idx + 1,
       content: el.textContent.trim()
     }));
