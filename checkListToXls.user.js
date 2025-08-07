@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         Download Button for LT
 // @namespace    http://tampermonkey.net
-// @version      2025-08-06_v.3.9.1
+// @version      2025-08-08_v.3.9.2
 // @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx
-// @  Версия 3.9.1
-// @  добавил проверку на пустой чек-лист
+// @  Версия 3.9.2
+// @  изменил селектор в функции manageButtonVisibility
 // @author       osmaav
 // @homepageURL  https://github.com/osmaav/extention-for-lt
 // @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
@@ -113,18 +113,14 @@
   // 8. Управление видимостью кнопки
   function manageButtonVisibility() {
     const button = document.querySelector('.btnExpListToXlsx');
+    // Проверка наличия кнопки
     if (!button) {
-      let targetEl = document.querySelector('#modal-container > div:nth-child(5) > div.flex > div > div > div:nth-child(2) > div > div > div:nth-child(2) > div:nth-child(2) > span');
-      if (targetEl) {
-        targetEl.append(createDownloadButton());
-      } else {
-        targetEl = document.querySelector('#modal-container #task-prop-content > div:nth-child(3) > div > span');
+        // Надежный селектор для поиска элемента с текстом "Чек-лист"
+        const targetEl = document.querySelector('#modal-container #task-prop-content span:contains("Чек-лист")');
+        // Добавляем кнопку загрузки, если целевой элемент найден
         if (targetEl) {
-          targetEl.append(createDownloadButton());
-        } else {
-          document.querySelector('#modal-container #task-prop-content > div:nth-child(4) div span').append(createDownloadButton());
+            targetEl.append(createDownloadButton());
         }
-      }
     }
   }
 
