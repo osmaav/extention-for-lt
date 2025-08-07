@@ -1,14 +1,10 @@
 // ==UserScript==
-// @name         Download Button for LT 3.10
-// @version      2025-08-08_v.3.10
+// @name         Download Button for LT 3.11
+// @version      2025-08-08_v.3.11
 // @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx
-// @  Версия 3.10
-// @  изменил селектор в функции manageButtonVisibility
 // @author       osmaav
-// @homepageURL  https://github.com/osmaav/extention-for-lt
 // @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
 // @downloadURL  https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
-// @supportURL   https://github.com/osmaav/extention-for-lt/issues
 // @match        https://beta.leadertask.ru/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=leadertask.ru
 // @grant        none
