@@ -110,20 +110,6 @@
   }
 
   // 8. Управление видимостью кнопки
-  // function manageButtonVisibility() {
-  //   const button = document.querySelector('.btnExpListToXlsx');
-  //   // Проверка наличия кнопки
-  //   if (!button) {
-  //     // Надежный селектор для поиска элемента с текстом "Чек-лист"
-  //     // const targetEl = document.querySelector('#modal-container #task-prop-content span:contains("Чек-лист")');
-  //     const targetEl = document.querySelector('#modal-container #task-prop-content span.text-[14px].flex.w-full.pb-[16px].leading-[150%].font-[500]');
-  //     // Добавляем кнопку загрузки, если целевой элемент найден
-  //     if (targetEl) {
-  //       targetEl.append(createDownloadButton());
-  //     }
-  //   }
-  // }
-
   function manageButtonVisibility() {
     const button = document.querySelector('.btnExpListToXlsx');
     if (!button) {
