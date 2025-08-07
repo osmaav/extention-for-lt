@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Download Button for LT
 // @namespace    http://tampermonkey.net
-// @version      2025-08-08_v.3.9.2
+// @version      2025-08-08_v.3.9.3
 // @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx
-// @  Версия 3.9.2
+// @  Версия 3.9.3
 // @  изменил селектор в функции manageButtonVisibility
 // @author       osmaav
 // @homepageURL  https://github.com/osmaav/extention-for-lt
@@ -35,7 +35,6 @@
   });
 
   // 2. Начальные настройки
-  let oldCheckListSize = 0;
   let previousUrlPath = '';
 
   // 3. Добавление стилей для кнопки скачивания
@@ -66,7 +65,7 @@
     `;
 
     const styleElem = document.createElement('style');
-    styleElem.type = 'text/css';
+    // styleElem.type = 'text/css';
     styleElem.appendChild(document.createTextNode(styles));
     document.head.appendChild(styleElem);
   }
@@ -111,16 +110,32 @@
   }
 
   // 8. Управление видимостью кнопки
+  // function manageButtonVisibility() {
+  //   const button = document.querySelector('.btnExpListToXlsx');
+  //   // Проверка наличия кнопки
+  //   if (!button) {
+  //     // Надежный селектор для поиска элемента с текстом "Чек-лист"
+  //     // const targetEl = document.querySelector('#modal-container #task-prop-content span:contains("Чек-лист")');
+  //     const targetEl = document.querySelector('#modal-container #task-prop-content span.text-[14px].flex.w-full.pb-[16px].leading-[150%].font-[500]');
+  //     // Добавляем кнопку загрузки, если целевой элемент найден
+  //     if (targetEl) {
+  //       targetEl.append(createDownloadButton());
+  //     }
+  //   }
+  // }
+
   function manageButtonVisibility() {
     const button = document.querySelector('.btnExpListToXlsx');
-    // Проверка наличия кнопки
     if (!button) {
-        // Надежный селектор для поиска элемента с текстом "Чек-лист"
-        const targetEl = document.querySelector('#modal-container #task-prop-content span:contains("Чек-лист")');
-        // Добавляем кнопку загрузки, если целевой элемент найден
-        if (targetEl) {
-            targetEl.append(createDownloadButton());
-        }
+      // Сначала выбираем все подходящие элементы по уникальным классам
+      const candidates = document.querySelectorAll('#modal-container #task-prop-content span.flex.w-full.border-solid');
+
+      // Затем фильтруем их по наличию текста "Чек-лист"
+      const targetEl = [...candidates].find(el => el.textContent.includes('Чек-лист'));
+
+      if (targetEl) {
+        targetEl.append(createDownloadButton());
+      }
     }
   }
 
@@ -138,30 +153,28 @@
   // 10. Установка наблюдателя за изменениями DOM
   function setupMutationObserver() {
     const modalContainer = document.querySelector('#modal-container'); // Найти контейнер с идентификатором "#modal-container"
-  
+
     if (!modalContainer) { // Проверьте наличие контейнера
       console.error('UserScript: Контейнер #modal-container не найден');
       return;
     }
-  
-    let prevLocation = location.pathname; // Сохранить исходный путь URL для последующего сравнения
-  
+
     const observer = new MutationObserver((mutations) => { // Создать экземпляр наблюдателя
       const lastMutation = mutations[mutations.length - 1]; // Получить последнее событие изменения
-  
+
       if (lastMutation.type === 'childList') { // Если произошло изменение списка дочерних элементов
         const thirdChild = modalContainer.children[2]; // Найти третий элемент (#modal-container > nth-child(3))
         const fifthChild = modalContainer.children[4]; // Найти пятый элемент (#modal-container > nth-child(5))
         let windowOpen = false; // Флаг для проверки открытия окон
-  
+
         if (thirdChild && window.getComputedStyle(thirdChild).display !== 'none') { // Проверить видимость третьего элемента
           windowOpen = true; // Открытие подтверждено
         }
-  
+
         if (fifthChild && window.getComputedStyle(fifthChild).display !== 'none') { // Проверить видимость пятого элемента
           windowOpen = true; // Открытие подтверждено
         }
-  
+
         if (windowOpen) { // Если одно из окон открыто
           const currentUrlPath = location.pathname; // Текущий путь URL
           if (previousUrlPath !== currentUrlPath) { // Проверить изменение пути
@@ -171,9 +184,9 @@
         }
       }
     });
-  
+
     observer.observe(modalContainer, { childList: true, subtree: true, attributeFilter: ['style'] }); // Включить наблюдение за изменением детей и стилями
-  
+
     window.addEventListener('beforeunload', () => { // Убедимся, что наблюдатель отключится при закрытии страницы
       observer.disconnect();
     });
