@@ -36,7 +36,7 @@
     const styles = `
       /* Стили для кнопки */
       .btnExpListToXlsx {
-        background-color: rgba(0, 255, 0, 0.2);
+        /* background-color: rgba(0, 255, 0, 0.2);*/
         border-radius: 6px;
         padding: 4px 8px;
         font-size: 14px;
@@ -50,7 +50,7 @@
       }
 
       .btnExpListToXlsx:hover {
-        background-color: rgba(0, 255, 0, 0.1);
+        /*background-color: rgba(0, 255, 0, 0.1);*/
       }
 
       .btnExpListToXlsx:active {
@@ -67,7 +67,7 @@
   // 4. Создание кнопки скачивания
   function createDownloadButton() {
     const button = document.createElement('button');
-    button.classList.add('btnExpListToXlsx');
+    button.classList.add('btnExpListToXlsx', 'dark:bg-[#0A0A0C]', 'dark:text-[#C5C6CF]', 'opacity-50', 'hover:opacity-100');
     button.textContent = 'Скачать';
     button.onclick = handleDownloadClick;
     return button;
