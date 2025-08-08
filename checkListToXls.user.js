@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name         Download Button for LT 3.11
-// @version      2025-08-08_v.3.11
+// @name         Download Button for LT 3.13
+// @version      2025-08-08_v.3.13
 // @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx
 // @author       osmaav
 // @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
@@ -36,21 +36,8 @@
     const styles = `
       /* Стили для кнопки */
       .btnExpListToXlsx {
-        /* background-color: rgba(0, 255, 0, 0.2);*/
-        border-radius: 6px;
-        padding: 4px 8px;
-        font-size: 14px;
-        line-height: 16px;
         transition: all 0.3s ease-in-out;
-        position: relative;
-        margin-left: 5px;
-        height: 1.6rem;
-        width: 4.6rem;
         box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.3);
-      }
-
-      .btnExpListToXlsx:hover {
-        /*background-color: rgba(0, 255, 0, 0.1);*/
       }
 
       .btnExpListToXlsx:active {
@@ -67,7 +54,7 @@
   // 4. Создание кнопки скачивания
   function createDownloadButton() {
     const button = document.createElement('button');
-    button.classList.add('btnExpListToXlsx', 'dark:bg-[#0A0A0C]', 'dark:text-[#C5C6CF]', 'opacity-50', 'hover:opacity-100');
+    button.classList.add('btnExpListToXlsx', 'mx-[8px]', 'px-[8px]', 'h-[28px]', 'opacity-50', 'hover:opacity-100', 'bg-[#EEEEF1]', 'text-[#4A4B56]', 'dark:bg-[#0A0A0C]', 'dark:text-[#C5C6CF]', 'rounded-[6px]', 'text-[12px]', 'font-medium');
     button.textContent = 'Скачать';
     button.onclick = handleDownloadClick;
     return button;
@@ -107,8 +94,8 @@
   function manageButtonVisibility() {
     const button = document.querySelector('.btnExpListToXlsx');
     if (!button) {
-      // Сначала выбираем все подходящие элементы по уникальным классам
-      const candidates = document.querySelectorAll('#modal-container #task-prop-content span.flex.w-full.border-solid');
+      // Сначала выбираем все подходящие элементы
+      const candidates = document.querySelectorAll('#modal-container #task-prop-content span');
 
       // Затем фильтруем их по наличию текста "Чек-лист"
       const targetEl = [...candidates].find(el => el.textContent.includes('Чек-лист'));
