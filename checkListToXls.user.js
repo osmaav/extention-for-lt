@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name         Download Button for LT 3.13
-// @version      2025-08-08_v.3.13
+// @name         Download Button for LT 4.0
+// @version      2025-08-10_v.4.0
 // @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx
 // @author       osmaav
 // @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
@@ -34,14 +34,112 @@
   // 3. Добавление стилей для кнопки скачивания
   function addStyles() {
     const styles = `
-      /* Стили для кнопки */
-      .btnExpListToXlsx {
-        transition: all 0.3s ease-in-out;
-        box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.3);
+      @property --color-1 {
+        syntax: "<color>";
+        inherits: true;
+        initial-value: red;
       }
-
-      .btnExpListToXlsx:active {
-        transform: scale(0.95);
+      
+      @property --color-2 {
+        syntax: "<color>";
+        inherits: true;
+        initial-value: yellow;
+      }
+      
+      @property --color-3 {
+        syntax: "<color>";
+        inherits: true;
+        initial-value: green;
+      }
+      
+      @property --color-4 {
+        syntax: "<color>";
+        inherits: true;
+        initial-value: blue;
+      }
+      
+      @property --color-5 {
+        syntax: "<color>";
+        inherits: true;
+        initial-value: purple;
+      }
+      
+      @property --glow-deg {
+        syntax: "<angle>";
+        inherits: true;
+        initial-value: 0deg;
+      }
+      
+      .btnExpListToXlsx {
+        --gradient-glow: 
+          var(--color-1),
+          var(--color-2),
+          var(--color-3),
+          var(--color-4),
+          var(--color-5),
+          var(--color-1);
+        --glow-intensity: 0.125;
+        --glow-size: 8px;
+        --border-width: 1px;
+        
+        user-select: none;
+        -moz-user-select: none;
+        -khtml-user-select: none;
+        -webkit-user-select: none;
+        -o-user-select: none;
+        
+        font-size: 0.9em;
+        position: relative;
+        z-index: 0;
+        padding: 0.1em 0.5em;
+        left: 0.5em;
+        top: 0px;
+        border: var(--border-width, 1px) solid transparent;
+        border-radius: 6px;
+        background: linear-gradient(#000, #000) padding-box,
+          conic-gradient(from var(--glow-deg), var(--gradient-glow)) border-box;
+        transition: all 0.3s ease-in-out;
+        color: rgba(255, 255, 255, 0.5);
+        animation: glow 10s infinite linear;
+      }
+      
+      .btnExpListToXlsx::before,
+      .btnExpListToXlsx::after{
+        content: '';
+        position: absolute;
+        border-radius: inherit;
+      }
+      
+      .btnExpListToXlsx::before{
+        z-index: -1;
+        inset: 1px;
+        background: #111;
+        filter: blur(var(--glow-size, 6px));
+      }
+      
+      .btnExpListToXlsx::after{
+        z-index: -2;
+        inset: -1px;
+        background: conic-gradient(from var(--glow-deg), var(--gradient-glow));
+        filter: blur(var(--glow-size, 6px));
+        opacity: var(--glow-intensity, 0.5);
+      }
+      
+      .btnExpListToXlsx:hover {
+        --glow-intensity: 0.5;
+        --glow-size: 2px;
+      }
+      
+      .btnExpListToXlsx:hover:active {
+        font-weight: bold;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)) padding-box,
+        conic-gradient(from var(--glow-deg), var(--gradient-glow)) border-box;
+      }
+      
+      @keyframes glow {
+        100% {
+          --glow-deg: 360deg;
+        }
       }
     `;
 
@@ -54,7 +152,7 @@
   // 4. Создание кнопки скачивания
   function createDownloadButton() {
     const button = document.createElement('button');
-    button.classList.add('btnExpListToXlsx', 'mx-[8px]', 'px-[8px]', 'h-[28px]', 'opacity-50', 'hover:opacity-100', 'bg-[#EEEEF1]', 'text-[#4A4B56]', 'dark:bg-[#0A0A0C]', 'dark:text-[#C5C6CF]', 'rounded-[6px]', 'text-[12px]', 'font-medium');
+    button.classList.add('btnExpListToXlsx');
     button.textContent = 'Скачать';
     button.onclick = handleDownloadClick;
     return button;
@@ -172,3 +270,4 @@
     document.addEventListener('DOMContentLoaded', init);
   }
 })();
+
