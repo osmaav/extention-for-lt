@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name         Download Button for LT 4.2
-// @version      2025-08-11_v.4.2
+// @name         Download Button for LT 4.3
+// @version      2025-08-11_v.4.3
 // @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx
 // @author       osmaav
 // @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
@@ -96,10 +96,10 @@
         top: 0px;
         border: var(--border-width, 1px) solid transparent;
         border-radius: 6px;
-        background: linear-gradient(#000, #000) padding-box,
+        background: linear-gradient(white, white) padding-box,
           conic-gradient(from var(--glow-deg), var(--gradient-glow)) border-box;
         transition: all 0.3s ease-in-out;
-        color: rgba(255, 255, 255, 0.5);
+        /*color: rgba(0, 0, 0, 0.5);*/
         animation: glow 10s infinite linear;
       }
       
@@ -113,7 +113,7 @@
       .btnExpListToXlsx::before{
         z-index: -1;
         inset: 1px;
-        background: #111;
+        background: white;
         filter: blur(var(--glow-size, 6px));
       }
       
@@ -135,7 +135,16 @@
         background: linear-gradient(to top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)) padding-box,
         conic-gradient(from var(--glow-deg), var(--gradient-glow)) border-box;
       }
-      
+     
+      html.dark .btnExpListToXlsx {
+          background: linear-gradient(black, black) padding-box,
+          conic-gradient(from var(--glow-deg), var(--gradient-glow)) border-box;
+        }
+      html.dark .btnExpListToXlsx::before{
+          background: #111;
+        }
+      }      
+    
       @keyframes glow {
         100% {
           --glow-deg: 360deg;
