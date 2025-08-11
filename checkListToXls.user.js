@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name         Download Button for LT 4.3
-// @version      2025-08-11_v.4.3
+// @name         Download Button for LT 4.3.1
+// @version      2025-08-11_v.4.3.1
 // @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx
 // @author       osmaav
 // @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
@@ -34,7 +34,7 @@
   // 3. Добавление стилей для кнопки скачивания
   function addStyles() {
     const styles = `
-      @property --color-1 {
+    @property --color-1 {
         syntax: "<color>";
         inherits: true;
         initial-value: red;
@@ -70,6 +70,12 @@
         initial-value: 0deg;
       }
       
+      @keyframes glow {
+        100% {
+          --glow-deg: 360deg;
+        }
+      }
+      
       .btnExpListToXlsx {
         --gradient-glow: 
           var(--color-1),
@@ -81,13 +87,11 @@
         --glow-intensity: 0.125;
         --glow-size: 8px;
         --border-width: 1px;
-        
         user-select: none;
         -moz-user-select: none;
         -khtml-user-select: none;
         -webkit-user-select: none;
         -o-user-select: none;
-        
         font-size: 0.9em;
         position: relative;
         z-index: 0;
@@ -99,7 +103,6 @@
         background: linear-gradient(white, white) padding-box,
           conic-gradient(from var(--glow-deg), var(--gradient-glow)) border-box;
         transition: all 0.3s ease-in-out;
-        /*color: rgba(0, 0, 0, 0.5);*/
         animation: glow 10s infinite linear;
       }
       
@@ -136,18 +139,14 @@
         conic-gradient(from var(--glow-deg), var(--gradient-glow)) border-box;
       }
      
-      html.dark .btnExpListToXlsx {
+      html.dark
+        .btnExpListToXlsx {
           background: linear-gradient(black, black) padding-box,
-          conic-gradient(from var(--glow-deg), var(--gradient-glow)) border-box;
-        }
+            conic-gradient(from var(--glow-deg), var(--gradient-glow)) border-box;
+      }
+      
       html.dark .btnExpListToXlsx::before{
           background: #111;
-        }
-      }      
-    
-      @keyframes glow {
-        100% {
-          --glow-deg: 360deg;
         }
       }
     `;
