@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name         Download Button for LT 4.4.3
-// @version      2025-11-18_v.4.4.3
+// @name         Download Button for LT 4.4.5
+// @version      2025-11-18_v.4.4.5
 // @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx
 // @author       osmaav
 // @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
@@ -156,8 +156,19 @@
     document.head.appendChild(styleElem);
   }
 
-  // 4. Создание кнопки скачивания
-  function createDownloadButton() {
+  // 4. Обработка кликов на кнопке
+  function handleDownloadClick(event) {
+    event.preventDefault();
+    const taskContainer = document.querySelector('.user_child_customer_custom div>div');
+    const taskName = taskContainer.outerText
+      .replaceAll(': ', '_')
+      .replaceAll('/', '_')
+      .replaceAll(' ', '_');
+    exportToXlsx(taskName, event.target.offsetParent);
+  }
+  
+  // 5. Создание кнопки скачивания
+  function createDownloadButton(target) {
     const button = document.createElement('button');
     button.classList.add('btnExpListToXlsx');
     button.textContent = 'Скачать';
@@ -165,7 +176,7 @@
     return button;
   }
 
-  // 5. Генерация имени файла
+  // 6. Генерация имени файла
   function generateFilename(taskName) {
     const dateStr = new Date().toLocaleDateString();
     return `CheckList-from-${taskName}-${dateStr}.xlsx`
@@ -173,9 +184,15 @@
       .replaceAll(':', '.');
   }
 
-  // 6. Экспорт чек-листа в Excel
-  function exportToXlsx(taskName) {
-    const checklist = getCheckList();
+  // 7. Получение элементов чек-листа
+   function getCheckList(parent) {
+    const elements = parent.querySelectorAll('#task-prop-content [contenteditable][placeholder="Добавить"]');
+    return [...elements];
+  }
+  
+  // 8. Экспорт чек-листа в Excel
+  function exportToXlsx(taskName, parent) {
+    const checklist = getCheckList(parent);
     if (!checklist.length) return;
     const rows = Array.from(checklist).map((el, idx) => ({
       idx: idx + 1,
@@ -189,60 +206,31 @@
     XLSX.writeFile(book, filename, { compression: true });
   }
 
-  // 7. Получение элементов чек-листа
-  function getCheckList() {
-    const elements = document.querySelectorAll('#task-prop-content [contenteditable][placeholder="Добавить"]');
-    return [...elements];
-  }
-
-  // 8. Управление видимостью кнопки
-  function manageButtonVisibility() {
-    const button = document.querySelector('.btnExpListToXlsx');
+  // 9. Управление видимостью кнопки
+  function manageButtonVisibility(target) {
+    const button = target.querySelector('.btnExpListToXlsx');
     if (!button) {
-      // Выбираем все подходящие элементы и фильтруем их по наличию текста "Чек-лист"
-      document.querySelectorAll('#modal-container #task-prop-content span').forEach(el => {if (el.textContent.includes('Чек-лист')) el.append(createDownloadButton())});
+      target.append(createDownloadButton(target));
     }
   }
 
-  // 9. Обработка кликов на кнопке
-  function handleDownloadClick(event) {
-    event.preventDefault();
-    const taskContainer = document.querySelector('.user_child_customer_custom div>div');
-    const taskName = taskContainer.outerText
-      .replaceAll(': ', '_')
-      .replaceAll('/', '_')
-      .replaceAll(' ', '_');
-    exportToXlsx(taskName);
-  }
-
   // 10. Установка наблюдателя за изменениями DOM
-  function setupMutationObserver(modalContainer) {
+  function setupMutationObserver(target) {
     const observer = new MutationObserver((mutations) => { // Создать экземпляр наблюдателя
       const lastMutation = mutations[mutations.length - 1]; // Получить последнее событие изменения
       if (lastMutation.type === 'childList') { // Если произошло изменение списка дочерних элементов
-        const thirdChild = modalContainer.children[2]; // Найти третий элемент (#modal-container > nth-child(3))
-        const fifthChild = modalContainer.children[4]; // Найти пятый элемент (#modal-container > nth-child(5))
-        let windowOpen = false; // Флаг для проверки открытия окон
-
-        if (thirdChild && window.getComputedStyle(thirdChild).display !== 'none') { // Проверить видимость третьего элемента
-          windowOpen = true; // Открытие подтверждено
-        }
-
-        if (fifthChild && window.getComputedStyle(fifthChild).display !== 'none') { // Проверить видимость пятого элемента
-          windowOpen = true; // Открытие подтверждено
-        }
-
-        if (windowOpen) { // Если одно из окон открыто
+        const targets = target.querySelectorAll('#task-prop-content span');
+        if (targets.length) { // Если окно открыто
           const currentUrlPath = location.pathname; // Текущий путь URL
           if (previousUrlPath !== currentUrlPath) { // Проверить изменение пути
             previousUrlPath = currentUrlPath; // Обновляем предыдущее значение пути
+            targets.forEach(el => {if (el.textContent.includes('Чек-лист')) manageButtonVisibility(el)}); // Показываем кнопку скачивания
           }
-          manageButtonVisibility(); // Показываем кнопку скачивания
         }
       }
     });
 
-    observer.observe(modalContainer, { childList: true, subtree: true, attributeFilter: ['style'] }); // Включить наблюдение за изменением детей и стилями
+    observer.observe(target, { childList: true, subtree: true, attributeFilter: ['style'] }); // Включить наблюдение за изменением детей и стилями
 
     window.addEventListener('beforeunload', () => { // Убедимся, что наблюдатель отключится при закрытии страницы
       observer.disconnect();
@@ -252,15 +240,14 @@
   // 11. Основная логика запуска
   function init() {
     addStyles();
-    let modalContainer;
-    function findmodalContainer(){
-      modalContainer = document.querySelector('#modal-container')
-      if (modalContainer) {
+    function findTarget(){
+      const target = document.querySelector('#modal-container') // ждем появления контейнера для окна свойств
+      if (target) {
         clearInterval(interval)
-        setupMutationObserver(modalContainer)
+        setupMutationObserver(target)
       }
     }
-    const interval = setInterval(findmodalContainer, 300)
+    const interval = setInterval(findTarget, 500)
   }
 
   // 12. Инициализация основного процесса
