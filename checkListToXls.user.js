@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name         Download Button for LT 4.4.5
-// @version      2025-11-18_v.4.4.5
+// @name         Download Button for LT 4.4.6
+// @version      2025-11-18_v.4.4.6
 // @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx
 // @author       osmaav
 // @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
@@ -97,7 +97,7 @@
         z-index: 0;
         padding: 0.1em 0.5em;
         left: 0.5em;
-        top: 0px;
+        top: -3px;
         border: var(--border-width, 1px) solid transparent;
         border-radius: 6px;
         background: linear-gradient(white, white) padding-box,
