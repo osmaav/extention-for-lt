@@ -201,7 +201,6 @@
     if (!button) {
       // Выбираем все подходящие элементы и фильтруем их по наличию текста "Чек-лист"
       document.querySelectorAll('#modal-container #task-prop-content span').forEach(el => {if (el.textContent.includes('Чек-лист')) el.append(createDownloadButton())});
-      document.querySelectorAll('#modal-container #task-prop-content span').forEach((el,idx) => {if (el.textContent.includes('Чек-лист')) console.log('DEBUG: idx, el',idx,el)});
     }
   }
 
