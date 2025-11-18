@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name         Download Button for LT 4.3.1
-// @version      2025-08-11_v.4.3.1
+// @name         Download Button for LT 4.3.2
+// @version      2025-11-18_v.4.4.0
 // @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx
 // @author       osmaav
 // @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
@@ -8,7 +8,7 @@
 // @match        https://*.beta.leadertask.ru/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=leadertask.ru
 // @grant        none
-// @run-at       document-idle
+// @run-at       document-idles
 // ==/UserScript==
 
 // Этот скрипт добавляет кнопку "Скачать" на веб-страницу Leadertask, позволяющую экспортировать чек-лист в файл формата xlsx.
@@ -39,45 +39,45 @@
         inherits: true;
         initial-value: red;
       }
-      
+
       @property --color-2 {
         syntax: "<color>";
         inherits: true;
         initial-value: yellow;
       }
-      
+
       @property --color-3 {
         syntax: "<color>";
         inherits: true;
         initial-value: green;
       }
-      
+
       @property --color-4 {
         syntax: "<color>";
         inherits: true;
         initial-value: blue;
       }
-      
+
       @property --color-5 {
         syntax: "<color>";
         inherits: true;
         initial-value: purple;
       }
-      
+
       @property --glow-deg {
         syntax: "<angle>";
         inherits: true;
         initial-value: 0deg;
       }
-      
+
       @keyframes glow {
         100% {
           --glow-deg: 360deg;
         }
       }
-      
+
       .btnExpListToXlsx {
-        --gradient-glow: 
+        --gradient-glow:
           var(--color-1),
           var(--color-2),
           var(--color-3),
@@ -105,21 +105,21 @@
         transition: all 0.3s ease-in-out;
         animation: glow 10s infinite linear;
       }
-      
+
       .btnExpListToXlsx::before,
       .btnExpListToXlsx::after{
         content: '';
         position: absolute;
         border-radius: inherit;
       }
-      
+
       .btnExpListToXlsx::before{
         z-index: -1;
         inset: 1px;
         background: white;
         filter: blur(var(--glow-size, 6px));
       }
-      
+
       .btnExpListToXlsx::after{
         z-index: -2;
         inset: -1px;
@@ -127,24 +127,24 @@
         filter: blur(var(--glow-size, 6px));
         opacity: var(--glow-intensity, 0.5);
       }
-      
+
       .btnExpListToXlsx:hover {
         --glow-intensity: 0.5;
         --glow-size: 2px;
       }
-      
+
       .btnExpListToXlsx:hover:active {
         font-weight: bold;
         background: linear-gradient(to top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)) padding-box,
         conic-gradient(from var(--glow-deg), var(--gradient-glow)) border-box;
       }
-     
+
       html.dark
         .btnExpListToXlsx {
           background: linear-gradient(black, black) padding-box,
             conic-gradient(from var(--glow-deg), var(--gradient-glow)) border-box;
       }
-      
+
       html.dark .btnExpListToXlsx::before{
           background: #111;
         }
@@ -200,15 +200,8 @@
   function manageButtonVisibility() {
     const button = document.querySelector('.btnExpListToXlsx');
     if (!button) {
-      // Сначала выбираем все подходящие элементы
-      const candidates = document.querySelectorAll('#modal-container #task-prop-content span');
-
-      // Затем фильтруем их по наличию текста "Чек-лист"
-      const targetEl = [...candidates].find(el => el.textContent.includes('Чек-лист'));
-
-      if (targetEl) {
-        targetEl.append(createDownloadButton());
-      }
+      // Выбираем все подходящие элементы и фильтруем их по наличию текста "Чек-лист"
+      document.querySelectorAll('#modal-container #task-prop-content span').forEach(el => {if (el.textContent.includes('Чек-лист')) el.append(createDownloadButton())});
     }
   }
 
@@ -228,7 +221,6 @@
     const modalContainer = document.querySelector('#modal-container'); // Найти контейнер с идентификатором "#modal-container"
 
     if (!modalContainer) { // Проверьте наличие контейнера
-      console.error('UserScript: Контейнер #modal-container не найден');
       return;
     }
 
@@ -250,8 +242,10 @@
 
         if (windowOpen) { // Если одно из окон открыто
           const currentUrlPath = location.pathname; // Текущий путь URL
+          console.log('DEBUG: windowOpen')
           if (previousUrlPath !== currentUrlPath) { // Проверить изменение пути
             previousUrlPath = currentUrlPath; // Обновляем предыдущее значение пути
+            console.log('DEBUG: previousUrlPath !== currentUrlPath')
           }
           manageButtonVisibility(); // Показываем кнопку скачивания
         }
@@ -278,4 +272,3 @@
     document.addEventListener('DOMContentLoaded', init);
   }
 })();
-
