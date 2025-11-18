@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name         Download Button for LT 4.4.0
-// @version      2025-11-18_v.4.4.0
+// @name         Download Button for LT 4.4.1
+// @version      2025-11-18_v.4.4.1
 // @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx
 // @author       osmaav
 // @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
@@ -163,6 +163,7 @@
     button.classList.add('btnExpListToXlsx');
     button.textContent = 'Скачать';
     button.onclick = handleDownloadClick;
+    console.log('DEBUG: button',button)
     return button;
   }
 
@@ -202,6 +203,7 @@
     if (!button) {
       // Выбираем все подходящие элементы и фильтруем их по наличию текста "Чек-лист"
       document.querySelectorAll('#modal-container #task-prop-content span').forEach(el => {if (el.textContent.includes('Чек-лист')) el.append(createDownloadButton())});
+      document.querySelectorAll('#modal-container #task-prop-content span').forEach((el,idx) => {if (el.textContent.includes('Чек-лист')) console.log('DEBUG: idx, el',idx,el)});
     }
   }
 
@@ -217,16 +219,9 @@
   }
 
   // 10. Установка наблюдателя за изменениями DOM
-  function setupMutationObserver() {
-    const modalContainer = document.querySelector('#modal-container'); // Найти контейнер с идентификатором "#modal-container"
-
-    if (!modalContainer) { // Проверьте наличие контейнера
-      return;
-    }
-
+  function setupMutationObserver(modalContainer) {
     const observer = new MutationObserver((mutations) => { // Создать экземпляр наблюдателя
       const lastMutation = mutations[mutations.length - 1]; // Получить последнее событие изменения
-
       if (lastMutation.type === 'childList') { // Если произошло изменение списка дочерних элементов
         const thirdChild = modalContainer.children[2]; // Найти третий элемент (#modal-container > nth-child(3))
         const fifthChild = modalContainer.children[4]; // Найти пятый элемент (#modal-container > nth-child(5))
@@ -242,10 +237,8 @@
 
         if (windowOpen) { // Если одно из окон открыто
           const currentUrlPath = location.pathname; // Текущий путь URL
-          console.log('DEBUG: windowOpen')
           if (previousUrlPath !== currentUrlPath) { // Проверить изменение пути
             previousUrlPath = currentUrlPath; // Обновляем предыдущее значение пути
-            console.log('DEBUG: previousUrlPath !== currentUrlPath')
           }
           manageButtonVisibility(); // Показываем кнопку скачивания
         }
@@ -262,7 +255,15 @@
   // 11. Основная логика запуска
   function init() {
     addStyles();
-    setupMutationObserver();
+    let modalContainer;
+    function findmodalContainer(){
+      modalContainer = document.querySelector('#modal-container')
+      if (modalContainer) {
+        clearInterval(interval)
+        setupMutationObserver(modalContainer)
+      }
+    }
+    const interval = setInterval(findmodalContainer, 300)
   }
 
   // 12. Инициализация основного процесса
