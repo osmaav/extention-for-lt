@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Download Button for LT 4.3.2
+// @name         Download Button for LT 4.4.0
 // @version      2025-11-18_v.4.4.0
 // @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx
 // @author       osmaav
