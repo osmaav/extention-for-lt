@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         Download Button for LT 4.5.1
-// @version      2025-12-12_v.4.5.1
-// @description  Скрипт создает кнопку для выгрузки Чек-листа в файл формата xlsx
+// @name         Download Button for LT 4.5.2
+// @version      2025-12-13_v.4.5.2
+// @description  Скрипт создает кнопку для скачивания Чек-листа в файл формата xlsx
 // @author       osmaav
 // @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
 // @downloadURL  https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
@@ -12,8 +12,8 @@
 // @run-at       document-idles
 // ==/UserScript==
 
-// Этот скрипт добавляет кнопку с иконкой на веб-страницу Leadertask, позволяющую экспортировать чек-лист в файл формата xlsx.
-// Скрипт подключается к библиотеке XLSX, обрабатывает события и контролирует отображение кнопки экспорта.
+// Этот скрипт добавляет кнопку с иконкой на веб-страницу Leadertask, позволяющую скачать чек-лист в файл формата xlsx.
+// Скрипт подключается к библиотеке XLSX, обрабатывает события и контролирует отображение кнопки.
 
 (async () => {
   'use strict';
@@ -82,26 +82,40 @@
   }
 
   // 4. Обработка кликов на кнопке
-  function handleDownloadClick(event) {
-    event.preventDefault();
+  function handleDownloadClick(target) {
     const taskContainer = document.querySelector('.user_child_customer_custom div>div');
     const taskName = taskContainer.outerText
       .replaceAll(': ', '_')
       .replaceAll('/', '_')
       .replaceAll(' ', '_');
-    exportToXlsx(taskName, event.target.offsetParent);
+    exportToXlsx(taskName, target.parentElement.parentElement.parentElement.parentElement);
   }
   
   // 5. Создание кнопки скачивания
   function createDownloadButton(target) {
     const button = document.createElement('button');
-    const classes = ["btnExpListToXlsx", "bg-[#EEEEF1]", "dark:bg-[#0A0A0C]", "opacity-50", "hover:opacity-100"];
-    classes.forEach(el=>button.classList.add(`${el}`));
-    button.innerHTML = `<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nN2Uv0oDQRDG09gpgmCjYmMj+hRaKb6AjQ9gaWNsBEEQn8PChxAxePd9k6ibGYWAtahlQloLiWy8YC45ktuYWDjwVfPnt7Mzu4XCvzPSdkB9o1hrsLQBsYNgAKivw4vbj2gnYR0kiXnjKNaC6PlEAQyBjApgG5JjJrkB1LgPQK2PDRCUl381bajGs5oSCOg4RapbED31isu63UlI7311l3SrpBWDARC7r1Selrwo9tALAPWzVKpNU+yd1ONggFdU0bU4tvXuBKZX8QJwKxC7zPg+osEdUBHHbtkLYuwHaIPUI4q9iNTmkpwPiB0C1YXM4ikAbIO0s289bva2nMxgz3eJsu4nf1GxMMx+s0VITt7umBpnAvzGjAbRKPiBTuQl/ykAOa4KYrc+VsQWQWv2+an1KNL5kecBsWsf65ybAvUuAwDvC72FTHPOzVKs3AUn8DwzluJpiN6QdtVb/At3PVyfwezqAwAAAABJRU5ErkJggg==" alt="xls-export">`;
-    button.onclick = handleDownloadClick;
+    button.classList.add(
+        'btnExpListToXlsx',
+        'bg-[#EEEEF1]',
+        'dark:bg-[#0A0A0C]',
+        'opacity-50',
+        'hover:opacity-100'
+    );
+
+    // Отображаем изображение в качестве иконки загрузки
+    const iconImg = `
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nN2Uv0oDQRDG09gpgmCjYmMj+hRaKb6AjQ9gaWNsBEEQn8PChxAxePd9k6ibGYWAtahlQloLiWy8YC45ktuYWDjwVfPnt7Mzu4XCvzPSdkB9o1hrsLQBsYNgAKivw4vbj2gnYR0kiXnjKNaC6PlEAQyBjApgG5JjJrkB1LgPQK2PDRCUl381bajGs5oSCOg4RapbED31isu63UlI7311l3SrpBWDARC7r1Selrwo9tALAPWzVKpNU+yd1ONggFdU0bU4tvXuBKZX8QJwKxC7zPg+osEdUBHHbtkLYuwHaIPUI4q9iNTmkpwPiB0C1YXM4ikAbIO0s289bva2nMxgz3eJsu4nf1GxMMx+s0VITt7umBpnAvzGjAbRKPiBTuQl/ykAOa4KYrc+VsQWQWv2+an1KNL5kecBsWsf65ybAvUuAwDvC72FTHPOzVKs3AUn8DwzluJpiN6QdtVb/At3PVyfwezqAwAAAABJRU5ErkJggg==" alt="xls-export">
+    `;
+
+    button.innerHTML = iconImg;
+    button.title = 'Скачать чек-лист'; // Альтернативный текст для доступности
+
+    // Присваиваем обработчик нажатия кнопки
+    button.onclick = handleDownloadClick.bind(null, target);
+      
     return button;
   }
-
+  
   // 6. Генерация имени файла
   function generateFilename(taskName) {
     const dateStr = new Date().toLocaleDateString();
@@ -111,8 +125,8 @@
   }
 
   // 7. Получение элементов чек-листа
-   function getCheckList(parent) {
-    const elements = parent.querySelectorAll('#task-prop-content [contenteditable][placeholder="Добавить"]');
+  function getCheckList(parent) {
+    const elements = parent.querySelectorAll('#task-prop-content [contenteditable]');
     return [...elements];
   }
   
@@ -121,7 +135,7 @@
     const checklist = getCheckList(parent);
     if (!checklist.length) return;
     const rows = Array.from(checklist).map((el, idx) => ({
-      idx: idx + 1,
+      idx: idx+1,
       content: el.textContent.trim()
     }));
     const sheet = XLSX.utils.json_to_sheet(rows);
