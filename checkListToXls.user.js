@@ -1,17 +1,18 @@
 // ==UserScript==
-// @name         Download Button for LT 4.4.6
-// @version      2025-11-18_v.4.4.6
-// @description  Скрипт создает кнопку "скачать" для выгрузки Чек-листа в файл формата xlsx
+// @name         Download Button for LT 4.5.0
+// @version      2025-12-12_v.4.5.0
+// @description  Скрипт создает кнопку для выгрузки Чек-листа в файл формата xlsx
 // @author       osmaav
 // @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
 // @downloadURL  https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
 // @match        https://*.beta.leadertask.ru/*
+// @match        https://www.leadertask.ru/web/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=leadertask.ru
 // @grant        none
 // @run-at       document-idles
 // ==/UserScript==
 
-// Этот скрипт добавляет кнопку "Скачать" на веб-страницу Leadertask, позволяющую экспортировать чек-лист в файл формата xlsx.
+// Этот скрипт добавляет кнопку с иконкой на веб-страницу Leadertask, позволяющую экспортировать чек-лист в файл формата xlsx.
 // Скрипт подключается к библиотеке XLSX, обрабатывает события и контролирует отображение кнопки экспорта.
 
 (async () => {
@@ -34,58 +35,7 @@
   // 3. Добавление стилей для кнопки скачивания
   function addStyles() {
     const styles = `
-    @property --color-1 {
-        syntax: "<color>";
-        inherits: true;
-        initial-value: red;
-      }
-
-      @property --color-2 {
-        syntax: "<color>";
-        inherits: true;
-        initial-value: yellow;
-      }
-
-      @property --color-3 {
-        syntax: "<color>";
-        inherits: true;
-        initial-value: green;
-      }
-
-      @property --color-4 {
-        syntax: "<color>";
-        inherits: true;
-        initial-value: blue;
-      }
-
-      @property --color-5 {
-        syntax: "<color>";
-        inherits: true;
-        initial-value: purple;
-      }
-
-      @property --glow-deg {
-        syntax: "<angle>";
-        inherits: true;
-        initial-value: 0deg;
-      }
-
-      @keyframes glow {
-        100% {
-          --glow-deg: 360deg;
-        }
-      }
-
       .btnExpListToXlsx {
-        --gradient-glow:
-          var(--color-1),
-          var(--color-2),
-          var(--color-3),
-          var(--color-4),
-          var(--color-5),
-          var(--color-1);
-        --glow-intensity: 0.125;
-        --glow-size: 8px;
         --border-width: 1px;
         user-select: none;
         -moz-user-select: none;
@@ -100,10 +50,7 @@
         top: -3px;
         border: var(--border-width, 1px) solid transparent;
         border-radius: 6px;
-        background: linear-gradient(white, white) padding-box,
-          conic-gradient(from var(--glow-deg), var(--gradient-glow)) border-box;
         transition: all 0.3s ease-in-out;
-        animation: glow 10s infinite linear;
       }
 
       .btnExpListToXlsx::before,
@@ -116,33 +63,11 @@
       .btnExpListToXlsx::before{
         z-index: -1;
         inset: 1px;
-        background: white;
-        filter: blur(var(--glow-size, 6px));
       }
 
       .btnExpListToXlsx::after{
         z-index: -2;
         inset: -1px;
-        background: conic-gradient(from var(--glow-deg), var(--gradient-glow));
-        filter: blur(var(--glow-size, 6px));
-        opacity: var(--glow-intensity, 0.5);
-      }
-
-      .btnExpListToXlsx:hover {
-        --glow-intensity: 0.5;
-        --glow-size: 2px;
-      }
-
-      .btnExpListToXlsx:hover:active {
-        font-weight: bold;
-        background: linear-gradient(to top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)) padding-box,
-        conic-gradient(from var(--glow-deg), var(--gradient-glow)) border-box;
-      }
-
-      html.dark
-        .btnExpListToXlsx {
-          background: linear-gradient(black, black) padding-box,
-            conic-gradient(from var(--glow-deg), var(--gradient-glow)) border-box;
       }
 
       html.dark .btnExpListToXlsx::before{
@@ -170,8 +95,9 @@
   // 5. Создание кнопки скачивания
   function createDownloadButton(target) {
     const button = document.createElement('button');
-    button.classList.add('btnExpListToXlsx');
-    button.textContent = 'Скачать';
+    const classes = ["btnExpListToXlsx", "bg-[#EEEEF1]", "text-[#4A4B56]", "dark:bg-[#0A0A0C]", "dark:text-[#C5C6CF]", "opacity-50", "hover:opacity-100"];
+    classes.forEach(el=>button.classList.add(`${el}`));
+    button.innerHTML = `<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nN2Uv0oDQRDG09gpgmCjYmMj+hRaKb6AjQ9gaWNsBEEQn8PChxAxePd9k6ibGYWAtahlQloLiWy8YC45ktuYWDjwVfPnt7Mzu4XCvzPSdkB9o1hrsLQBsYNgAKivw4vbj2gnYR0kiXnjKNaC6PlEAQyBjApgG5JjJrkB1LgPQK2PDRCUl381bajGs5oSCOg4RapbED31isu63UlI7311l3SrpBWDARC7r1Selrwo9tALAPWzVKpNU+yd1ONggFdU0bU4tvXuBKZX8QJwKxC7zPg+osEdUBHHbtkLYuwHaIPUI4q9iNTmkpwPiB0C1YXM4ikAbIO0s289bva2nMxgz3eJsu4nf1GxMMx+s0VITt7umBpnAvzGjAbRKPiBTuQl/ykAOa4KYrc+VsQWQWv2+an1KNL5kecBsWsf65ybAvUuAwDvC72FTHPOzVKs3AUn8DwzluJpiN6QdtVb/At3PVyfwezqAwAAAABJRU5ErkJggg==" alt="xls-export">`;
     button.onclick = handleDownloadClick;
     return button;
   }
