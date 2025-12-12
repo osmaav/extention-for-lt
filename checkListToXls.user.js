@@ -95,7 +95,7 @@
   // 5. Создание кнопки скачивания
   function createDownloadButton(target) {
     const button = document.createElement('button');
-    const classes = ["btnExpListToXlsx", "bg-[#EEEEF1]", "text-[#4A4B56]", "dark:bg-[#0A0A0C]", "dark:text-[#C5C6CF]", "opacity-50", "hover:opacity-100"];
+    const classes = ["btnExpListToXlsx", "bg-[#EEEEF1]", "dark:bg-[#0A0A0C]", "opacity-50", "hover:opacity-100"];
     classes.forEach(el=>button.classList.add(`${el}`));
     button.innerHTML = `<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAABY0lEQVR4nN2Uv0oDQRDG09gpgmCjYmMj+hRaKb6AjQ9gaWNsBEEQn8PChxAxePd9k6ibGYWAtahlQloLiWy8YC45ktuYWDjwVfPnt7Mzu4XCvzPSdkB9o1hrsLQBsYNgAKivw4vbj2gnYR0kiXnjKNaC6PlEAQyBjApgG5JjJrkB1LgPQK2PDRCUl381bajGs5oSCOg4RapbED31isu63UlI7311l3SrpBWDARC7r1Selrwo9tALAPWzVKpNU+yd1ONggFdU0bU4tvXuBKZX8QJwKxC7zPg+osEdUBHHbtkLYuwHaIPUI4q9iNTmkpwPiB0C1YXM4ikAbIO0s289bva2nMxgz3eJsu4nf1GxMMx+s0VITt7umBpnAvzGjAbRKPiBTuQl/ykAOa4KYrc+VsQWQWv2+an1KNL5kecBsWsf65ybAvUuAwDvC72FTHPOzVKs3AUn8DwzluJpiN6QdtVb/At3PVyfwezqAwAAAABJRU5ErkJggg==" alt="xls-export">`;
     button.onclick = handleDownloadClick;
