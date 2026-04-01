@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name         Download Button for LT 4.5.3
-// @version      2026-04-01_v.4.5.3
+// @name         Download Button for LT 4.5.4
+// @version      2026-04-01_v.4.5.4
 // @description  Скрипт создает кнопку для скачивания Чек-листа в файл формата xlsx
 // @author       osmaav
 // @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
@@ -51,6 +51,26 @@
         transition: all 0.3s ease-in-out;
       }
 
+      .btnExpListToXlsx .svgColor path {
+        stroke-width: 2;
+        color: #db3400; /* Красный */
+      }
+
+      .btnExpListToXlsx:hover .svgColor path {
+        color: #008300; /* Темно-зеленый */
+      }
+
+      /* --- Темная тема --- */
+      
+      .dark .btnExpListToXlsx .svgColor path {
+        stroke-width: 1.5;
+        color: #1EFF00; /* Ярко-зеленый для контраста */
+      }
+      
+      .dark .btnExpListToXlsx:hover .svgColor path {
+        color: #FF4C00; /* Оранжевый */
+      }
+
       .btnExpListToXlsx::before,
       .btnExpListToXlsx::after{
         content: '';
@@ -66,16 +86,6 @@
       .btnExpListToXlsx::after{
         z-index: -2;
         inset: -1px;
-      }
-
-      .svgColor{
-         color: #0F0;
-      }
-        
-      .btnExpListToXlsx:hover{
-        .svgColor{
-         color: #FF4C00;
-        }
       }
     `;
 
@@ -107,11 +117,11 @@
 
     // Отображаем изображение в качестве иконки загрузки
     const iconSVG = `
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" class="svgColor">
-  <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-  <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-  <path d="M12 15V3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" class="svgColor">
+          <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15"></path>
+          <path d="M7 10L12 15L17 10"></path>
+          <path d="M12 15V3"></path>
+        </svg>
     `;
 
     button.innerHTML = iconSVG;
