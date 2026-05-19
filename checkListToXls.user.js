@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name         Download Button for LT 4.5.6
-// @version      2026-05-19_v.4.5.6
+// @name         Download Button for LT 4.5.7
+// @version      2026-05-19_v.4.5.7
 // @description  Скрипт создает кнопку для скачивания Чек-листа в файл формата xlsx
 // @author       osmaav
 // @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
@@ -20,21 +20,45 @@
   'use strict';
 
   let activeTooltip = null;
+  let showTimeout = null;
+  let hideTimeout = null;
 
-  function showTooltip(targetEl, text, placement = 'bottom', offset = 12) {
-    hideTooltip();
+  function showTooltip(targetEl, text, placement = 'bottom', offset = 12, showDelay = 600) {
+    // 🔹 Очищаем таймер скрытия, если пользователь вернулся на кнопку
+    if (hideTimeout) {
+      clearTimeout(hideTimeout);
+      hideTimeout = null;
+    }
+
+    // 🔹 Если тултип уже показывается — не создаём дубль
+    if (activeTooltip?.target === targetEl && !activeTooltip.el.dataset.hiding) {
+      return activeTooltip.el;
+    }
+
+    // 🔹 Отложенный показ (как в Element Plus: show-after)
+    showTimeout = setTimeout(() => {
+      _createAndShowTooltip(targetEl, text, placement, offset);
+    }, showDelay);
+
+    // Сохраняем ссылку на таймер для возможной отмены
+    targetEl._tooltipShowTimeout = showTimeout;
+  }
+
+  function _createAndShowTooltip(targetEl, text, placement, offset) {
+    hideTooltip(true); // force = true, чтобы убрать старый тултип без анимации
 
     const id = `tooltip-${Date.now()}`;
     const tooltip = document.createElement('div');
 
     tooltip.id = id;
-    tooltip.className = 'el-popper is-dark custom-tooltip';
+    tooltip.className = 'el-popper is-dark';
     tooltip.setAttribute('role', 'tooltip');
     tooltip.setAttribute('tabindex', '-1');
     tooltip.setAttribute('aria-hidden', 'false');
     tooltip.textContent = text;
+    tooltip.style.pointerEvents = 'none';
 
-    //Начальные стили
+    // Начальные стили
     tooltip.style.cssText = `
       position: absolute;
       top: 0;
@@ -42,7 +66,6 @@
       z-index: 2101;
       border-radius: 6px;
       font-size: 12px;
-      font-weight: 500;
       background: #303133;
       color: #fff;
       white-space: nowrap;
@@ -52,35 +75,27 @@
     `;
 
     document.body.appendChild(tooltip);
-
-    //Принудительный reflow для получения реальных размеров
-    void tooltip.offsetWidth;
+    void tooltip.offsetWidth; // reflow
 
     const rect = targetEl.getBoundingClientRect();
     const tooltipRect = tooltip.getBoundingClientRect();
 
     let x, y;
     const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
 
-    // Расчёт координат
     if (placement === 'bottom') {
-      x = rect.left + rect.width / 2;
+      x = rect.left + rect.width / 2 - tooltipRect.width / 2;
       y = rect.bottom + offset;
 
-      // Корректировка по горизонтали
       if (x < 10) x = 10;
       if (x + tooltipRect.width > viewportWidth - 10) {
         x = viewportWidth - tooltipRect.width - 10;
       }
     } else if (placement === 'top') {
-      x = rect.left + rect.width / 2;
+      x = rect.left + rect.width / 2 - tooltipRect.width / 2;
       y = rect.top - tooltipRect.height - offset;
 
-      // Если сверху нет места — показываем снизу
-      if (y < 0) {
-        y = rect.bottom + offset;
-      }
+      if (y < 0) y = rect.bottom + offset; // авто-переворот
 
       if (x < 10) x = 10;
       if (x + tooltipRect.width > viewportWidth - 10) {
@@ -88,40 +103,108 @@
       }
     }
 
-    // Применяем ФИНАЛЬНУЮ позицию ПОКА элемент ещё скрыт
+    // Применяем позицию пока скрыт
     tooltip.style.position = 'fixed';
     tooltip.style.transform = `translate3d(${x}px, ${y}px, 0px)`;
 
-    // делаем видимым — без анимации появления
+    // Показываем через rAF для синхронизации с рендером
     requestAnimationFrame(() => {
       tooltip.style.visibility = 'visible';
       tooltip.style.opacity = '1';
-
-      // Добавляем transition ПОСЛЕ появления — только для плавного исчезновения
       tooltip.style.transition = 'opacity 0.4s ease';
     });
 
-    // Доступность
     targetEl.setAttribute('aria-describedby', id);
-    activeTooltip = { el: tooltip, target: targetEl };
+    activeTooltip = {
+      el: tooltip,
+      target: targetEl,
+      isShowing: true
+    };
 
     return tooltip;
   }
 
-  function hideTooltip() {
-      if (!activeTooltip) return;
+  function hideTooltip(force = false) {
+    // 🔹 Отменяем показ, если пользователь быстро убрал мышь
+    if (showTimeout) {
+      clearTimeout(showTimeout);
+      showTimeout = null;
+    }
 
-    // Плавное исчезновение благодаря transition, который добавили в showTooltip
+    if (!activeTooltip?.el) return;
+
+    // 🔹 Если force=true (смена цели) — убираем сразу без анимации
+    if (force) {
+      activeTooltip.el.remove();
+      activeTooltip.target?.removeAttribute('aria-describedby');
+      activeTooltip = null;
+      return;
+    }
+
+    // 🔹 Помечаем, что начинается скрытие (защита от гонки)
+    activeTooltip.el.dataset.hiding = 'true';
+
+    // Плавное исчезновение
     activeTooltip.el.style.opacity = '0';
 
-    // Удаляем из DOM после завершения анимации
-    setTimeout(() => {
-      if (activeTooltip && activeTooltip.el) {
+    hideTimeout = setTimeout(() => {
+      if (activeTooltip?.el) {
         activeTooltip.el.remove();
         activeTooltip.target?.removeAttribute('aria-describedby');
       }
       activeTooltip = null;
-    }, 400); // Должно совпадать с длительностью transition (0.4s = 400ms)
+    }, 200);
+  }
+
+  // 🔹 Вспомогательная функция для инициализации обработчиков
+  function initTooltipListeners(targetEl, text, options = {}) {
+    const {
+      placement = 'bottom',
+      offset = 12,
+      showDelay = 600,
+      hideDelay = 100 // задержка перед скрытием для защиты от "дрожания"
+    } = options;
+
+    let localHideTimeout = null;
+
+    const onMouseEnter = (e) => {
+      // 🔹 Игнорируем, если курсор перешёл на вложенный элемент внутри кнопки
+      if (e.relatedTarget && targetEl.contains(e.relatedTarget)) {
+        return;
+      }
+
+      if (localHideTimeout) {
+        clearTimeout(localHideTimeout);
+        localHideTimeout = null;
+      }
+
+      showTooltip(targetEl, text, placement, offset, showDelay);
+    };
+
+    const onMouseLeave = (e) => {
+      // 🔹 Игнорируем, если курсор перешёл на вложенный элемент
+      if (e.relatedTarget && targetEl.contains(e.relatedTarget)) {
+        return;
+      }
+
+      // 🔹 Небольшая задержка перед скрытием — если пользователь быстро вернулся
+      localHideTimeout = setTimeout(() => {
+        hideTooltip();
+      }, hideDelay);
+    };
+
+    targetEl.addEventListener('mouseenter', onMouseEnter);
+    targetEl.addEventListener('mouseleave', onMouseLeave);
+
+    // 🔹 Очистка при удалении элемента
+    return () => {
+      targetEl.removeEventListener('mouseenter', onMouseEnter);
+      targetEl.removeEventListener('mouseleave', onMouseLeave);
+      if (localHideTimeout) clearTimeout(localHideTimeout);
+      if (targetEl._tooltipShowTimeout) {
+        clearTimeout(targetEl._tooltipShowTimeout);
+      }
+    };
   }
 
   // 1. Подключение библиотеки XLSX
@@ -236,14 +319,12 @@
     // Присваиваем обработчик нажатия кнопки
     button.onclick = handleDownloadClick.bind(null, target);
 
-    button.addEventListener('mouseenter', () => {
-      showTooltip(button, 'Скачать чек-лист');
+    const cleanup = initTooltipListeners(button, 'Скачать чек-лист', {
+      placement: 'bottom',
+      offset: 12,
+      showDelay: 200, // задержка перед показом (как в Element Plus)
+      hideDelay: 100  // задержка перед скрытием (защита от "дрожания")
     });
-    button.addEventListener('mouseleave', () => {
-      hideTooltip();
-    });
-    button.addEventListener('focus', () => showTooltip(button, 'Скачать чек-лист'));
-    button.addEventListener('blur', hideTooltip);
     return button;
   }
   
