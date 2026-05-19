@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name         Download Button for LT 4.5.5
-// @version      2026-04-02_v.4.5.5
+// @name         Download Button for LT 4.5.6
+// @version      2026-05-19_v.4.5.6
 // @description  Скрипт создает кнопку для скачивания Чек-листа в файл формата xlsx
 // @author       osmaav
 // @updateURL    https://raw.githubusercontent.com/osmaav/extention-for-lt/main/checkListToXls.user.js
@@ -18,6 +18,112 @@
 
 (async () => {
   'use strict';
+
+  let activeTooltip = null;
+
+  function showTooltip(targetEl, text, placement = 'bottom', offset = 12) {
+    hideTooltip();
+
+    const id = `tooltip-${Date.now()}`;
+    const tooltip = document.createElement('div');
+
+    tooltip.id = id;
+    tooltip.className = 'el-popper is-dark custom-tooltip';
+    tooltip.setAttribute('role', 'tooltip');
+    tooltip.setAttribute('tabindex', '-1');
+    tooltip.setAttribute('aria-hidden', 'false');
+    tooltip.textContent = text;
+
+    //Начальные стили
+    tooltip.style.cssText = `
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 2101;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      background: #303133;
+      color: #fff;
+      white-space: nowrap;
+      pointer-events: none;
+      visibility: hidden;
+      opacity: 0;
+    `;
+
+    document.body.appendChild(tooltip);
+
+    //Принудительный reflow для получения реальных размеров
+    void tooltip.offsetWidth;
+
+    const rect = targetEl.getBoundingClientRect();
+    const tooltipRect = tooltip.getBoundingClientRect();
+
+    let x, y;
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    // Расчёт координат
+    if (placement === 'bottom') {
+      x = rect.left + rect.width / 2;
+      y = rect.bottom + offset;
+
+      // Корректировка по горизонтали
+      if (x < 10) x = 10;
+      if (x + tooltipRect.width > viewportWidth - 10) {
+        x = viewportWidth - tooltipRect.width - 10;
+      }
+    } else if (placement === 'top') {
+      x = rect.left + rect.width / 2;
+      y = rect.top - tooltipRect.height - offset;
+
+      // Если сверху нет места — показываем снизу
+      if (y < 0) {
+        y = rect.bottom + offset;
+      }
+
+      if (x < 10) x = 10;
+      if (x + tooltipRect.width > viewportWidth - 10) {
+        x = viewportWidth - tooltipRect.width - 10;
+      }
+    }
+
+    // Применяем ФИНАЛЬНУЮ позицию ПОКА элемент ещё скрыт
+    tooltip.style.position = 'fixed';
+    tooltip.style.transform = `translate3d(${x}px, ${y}px, 0px)`;
+
+    // делаем видимым — без анимации появления
+    requestAnimationFrame(() => {
+      tooltip.style.visibility = 'visible';
+      tooltip.style.opacity = '1';
+
+      // Добавляем transition ПОСЛЕ появления — только для плавного исчезновения
+      tooltip.style.transition = 'opacity 0.4s ease';
+    });
+
+    // Доступность
+    targetEl.setAttribute('aria-describedby', id);
+    activeTooltip = { el: tooltip, target: targetEl };
+
+    return tooltip;
+  }
+
+  function hideTooltip() {
+      if (!activeTooltip) return;
+
+    // Плавное исчезновение благодаря transition, который добавили в showTooltip
+    activeTooltip.el.style.opacity = '0';
+
+    // Удаляем из DOM после завершения анимации
+    setTimeout(() => {
+      if (activeTooltip && activeTooltip.el) {
+        activeTooltip.el.remove();
+        activeTooltip.target?.removeAttribute('aria-describedby');
+      }
+      activeTooltip = null;
+    }, 400); // Должно совпадать с длительностью transition (0.4s = 400ms)
+  }
+
   // 1. Подключение библиотеки XLSX
   function loadLibrary() {
     const script = document.createElement('script');
@@ -126,11 +232,18 @@
     `;
 
     button.innerHTML = iconSVG;
-    button.title = 'Скачать чек-лист'; // Альтернативный текст для доступности
 
     // Присваиваем обработчик нажатия кнопки
     button.onclick = handleDownloadClick.bind(null, target);
-      
+
+    button.addEventListener('mouseenter', () => {
+      showTooltip(button, 'Скачать чек-лист');
+    });
+    button.addEventListener('mouseleave', () => {
+      hideTooltip();
+    });
+    button.addEventListener('focus', () => showTooltip(button, 'Скачать чек-лист'));
+    button.addEventListener('blur', hideTooltip);
     return button;
   }
   
